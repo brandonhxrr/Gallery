@@ -3,8 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.brandonhxrr.gallery.MainActivity">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:id="@+id/page_1"
+        android:enabled="true"
+        android:icon="@drawable/ic_image"
+        android:title="@string/menu_photos"/>
+    <item
+        android:id="@+id/page_2"
+        android:enabled="true"
+        android:icon="@drawable/ic_album"
+        android:title="@string/menu_albums"/>
 </menu>
