@@ -18,6 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:gravity="center"
+            android:fontFamily="@font/product_sans_regular"
             android:text="@string/app_name"
             style="@style/TextViewStyle"
             android:textAlignment="center"
@@ -37,6 +38,6 @@
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:menu="@menu/menu_main"/>
+        app:menu="@menu/menu_main" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>
