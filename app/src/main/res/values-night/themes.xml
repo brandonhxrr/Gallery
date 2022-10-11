@@ -28,4 +28,8 @@
         <item name="colorSurfaceInverse">@color/md_theme_dark_inverseSurface</item>
         <item name="colorPrimaryInverse">@color/md_theme_dark_inversePrimary</item>
     </style>
+
+    <style name="TextViewStyle" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textColor">@color/md_theme_dark_onSurface</item>
+    </style>
 </resources>
