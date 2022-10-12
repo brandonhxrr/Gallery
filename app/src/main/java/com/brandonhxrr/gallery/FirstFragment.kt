@@ -70,7 +70,6 @@ class FirstFragment : Fragment() {
                 imagecursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
             photoList.add(Photo(i.toString(), imagecursor.getString(dataColumnIndex) ))
             Log.d("MSGF-P",  imagecursor.getString(dataColumnIndex));
-            //imageList.add(imagecursor.getString(dataColumnIndex))
         }
         return photoList
     }
