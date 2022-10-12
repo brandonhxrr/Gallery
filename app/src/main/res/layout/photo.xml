@@ -3,24 +3,16 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <com.google.android.material.card.MaterialCardView
+    <ImageView
+        android:id="@+id/item_photo"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:elevation="0dp"
-        app:cardCornerRadius="10dp"
-        app:strokeColor="@color/cardview_light_background"
-        >
-        <ImageView
-            android:id="@+id/item_photo"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@color/seed" />
-        <TextView
-            android:id="@+id/item_number"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/TextViewStyle"
-            android:text="1"/>
-    </com.google.android.material.card.MaterialCardView>
+        android:layout_margin="1dp"
+        android:src="@color/seed" />
+    <TextView
+        android:id="@+id/item_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/TextViewStyle"/>
 
 </FrameLayout>

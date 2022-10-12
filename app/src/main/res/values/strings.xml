@@ -45,4 +45,8 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string name="title_permission_needed">Need permission</string>
+    <string name="label_ok">Accept</string>
+    <string name="label_cancel">Cancel</string>
+    <string name="permission_rational_read_external">External</string>
 </resources>
