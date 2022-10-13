@@ -9,11 +9,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AbsListView
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.brandonhxrr.gallery.PhotoProvider.Companion.photoList
 import com.brandonhxrr.gallery.adapter.photoAdapter
 import com.brandonhxrr.gallery.databinding.FragmentFirstBinding
+import com.bumptech.glide.Glide
 
 class FirstFragment : Fragment() {
 
@@ -50,8 +53,26 @@ class FirstFragment : Fragment() {
 
     private fun initRecyclerView(context:Context) {
         val recyclerView = binding.gridRecyclerView
+
+        val glide = Glide.with(this)
+        val builder = glide.asBitmap()
+
         recyclerView.layoutManager = GridLayoutManager(context, 4)
-        recyclerView.adapter = photoAdapter(fetchImages())
+        recyclerView.adapter = photoAdapter(fetchImages(), builder)
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                when(newState) {
+                    RecyclerView.SCROLL_STATE_IDLE -> glide.resumeRequests()
+                    AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL, AbsListView.OnScrollListener.SCROLL_STATE_FLING -> glide.pauseRequests()
+                }
+            }
+        })
     }
 
     fun fetchImages(): ArrayList<Photo> {
