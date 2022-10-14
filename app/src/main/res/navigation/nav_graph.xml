@@ -24,5 +24,22 @@
         <action
             android:id="@+id/action_SecondFragment_to_FirstFragment"
             app:destination="@id/FirstFragment" />
+        <action
+            android:id="@+id/action_SecondFragment_to_ViewAlbumFragment"
+            app:destination="@id/ViewAlbumFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ViewAlbumFragment"
+        android:name="com.brandonhxrr.gallery.ViewAlbum"
+        android:label="@string/second_fragment_label"
+        tools:layout="@layout/fragment_view_album">
+
+        <action
+            android:id="@+id/action_ViewAlbum_to_Second_Fragment"
+            app:destination="@id/SecondFragment" />
+        <argument
+            android:name="albumPath"
+            app:argType="string" />
     </fragment>
 </navigation>
