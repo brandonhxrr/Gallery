@@ -52,8 +52,6 @@ class SecondFragment : Fragment() {
         val recyclerView = binding.gridRecyclerView
         recyclerView.layoutManager = GridLayoutManager(context, 2)
 
-
-
         val glide = Glide.with(this)
         val builder = glide.asBitmap()
 

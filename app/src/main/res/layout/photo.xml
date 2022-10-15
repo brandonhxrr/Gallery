@@ -9,10 +9,4 @@
         android:layout_height="80dp"
         android:layout_margin="1dp"
         android:src="@color/seed" />
-    <TextView
-        android:id="@+id/item_number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/TextViewStyle"/>
-
 </FrameLayout>

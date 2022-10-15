@@ -75,11 +75,8 @@ class ViewAlbum : Fragment() {
 
         val fileList: List<File> = getImagesFromFolder(requireContext(), pathAlbum.toString())
 
-        var i:Int = 0
-
         for (file in fileList) {
-            photoList.add(Photo(i.toString(), file.path))
-            i+=1
+            photoList.add(Photo(file.path))
         }
         return photoList
     }
