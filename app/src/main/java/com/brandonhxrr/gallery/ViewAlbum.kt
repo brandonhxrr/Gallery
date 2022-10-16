@@ -16,6 +16,7 @@ import com.brandonhxrr.gallery.adapter.photoAdapter
 import com.brandonhxrr.gallery.databinding.FragmentFirstBinding
 import com.bumptech.glide.Glide
 import java.io.File
+import java.util.Collections
 
 class ViewAlbum : Fragment() {
     private var pathAlbum: String? = null
@@ -70,7 +71,7 @@ class ViewAlbum : Fragment() {
         })
     }
 
-    fun fetchImages(): ArrayList<Photo> {
+    fun fetchImages(): List<Photo> {
         val photoList: ArrayList<Photo> = ArrayList()
 
         val fileList: List<File> = getImagesFromFolder(requireContext(), pathAlbum.toString())
@@ -78,6 +79,9 @@ class ViewAlbum : Fragment() {
         for (file in fileList) {
             photoList.add(Photo(file.path))
         }
+
+        photoList.reverse()
+
         return photoList
     }
 

@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestBuilder
 import java.io.File
+import java.util.Comparator
 
 class AlbumAdapter(val glide: RequestBuilder<Bitmap>) : RecyclerView.Adapter<AlbumViewHolder>() {
 
@@ -23,7 +24,7 @@ class AlbumAdapter(val glide: RequestBuilder<Bitmap>) : RecyclerView.Adapter<Alb
 
     fun setItems(fileMap: Map<File, List<File>>) {
         items = fileMap
-        indexes = fileMap.keys.toList()
+        indexes = fileMap.keys.sortedBy { t -> t.nameWithoutExtension }.toList()
         notifyDataSetChanged()
     }
 
