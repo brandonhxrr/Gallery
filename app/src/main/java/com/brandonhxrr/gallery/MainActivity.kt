@@ -20,7 +20,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
+    //private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var bottomNavView: BottomNavigationView
 
@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val navController = findNavController(R.id.nav_host_fragment_content_main)
-        appBarConfiguration = AppBarConfiguration(navController.graph)
+        //appBarConfiguration = AppBarConfiguration(navController.graph)
 
         bottomNavView = findViewById(R.id.bottomNavigationView)
 
@@ -42,16 +42,20 @@ class MainActivity : AppCompatActivity() {
             menuItem ->
             when(menuItem.itemId) {
                 R.id.menu_photos -> {
-                    if (navController.currentDestination?.id != R.id.FirstFragment){
-                        navController.navigate(R.id.action_SecondFragment_to_FirstFragment)
+                    if (navController.currentDestination?.id == R.id.SecondFragment){
+                        navController.popBackStack()
+                    } else if(navController.currentDestination?.id == R.id.ViewAlbumFragment) {
+                        navController.popBackStack(R.id.FirstFragment, false)
                     }
                     true
                 }
 
                 R.id.menu_album -> {
-                    if (navController.currentDestination?.id != R.id.SecondFragment){
+                    if (navController.currentDestination?.id == R.id.FirstFragment){
                         val bundle = bundleOf("albums" to albums)
                         navController.navigate(R.id.action_FirstFragment_to_SecondFragment, bundle)
+                    }else if(navController.currentDestination?.id == R.id.ViewAlbumFragment) {
+                        navController.popBackStack()
                     }
                     true
                 }
@@ -62,9 +66,9 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    override fun onSupportNavigateUp(): Boolean {
+    /*override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
-    }
+    }*/
 }
