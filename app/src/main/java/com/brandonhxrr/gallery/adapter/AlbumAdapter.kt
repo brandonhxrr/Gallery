@@ -12,6 +12,9 @@ class AlbumAdapter(val glide: RequestBuilder<Bitmap>) : RecyclerView.Adapter<Alb
     private var items = mapOf<File, List<File>>()
     private var indexes = listOf<File>()
 
+    //private var items = HashMap<String, List<String>>()
+    //private var indexes = listOf<String>()
+
     override fun onBindViewHolder(holder: AlbumViewHolder, position: Int) = holder.bind(getItemAt(position), glide)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlbumViewHolder = AlbumViewHolder.new(parent)
@@ -23,6 +26,11 @@ class AlbumAdapter(val glide: RequestBuilder<Bitmap>) : RecyclerView.Adapter<Alb
         indexes = fileMap.keys.toList()
         notifyDataSetChanged()
     }
+
+    /*fun setAlbums(albums: HashMap<String, List<String>>) {
+        items = albums
+        indexes = albums.keys.toList()
+    }*/
 
     private fun getItemAt(position: Int) = items[indexes[position]]
 

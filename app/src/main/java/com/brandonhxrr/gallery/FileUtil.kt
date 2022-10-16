@@ -16,6 +16,15 @@ fun sortImagesByFolder(files: List<File>): Map<File, List<File>> {
     return resultMap.toMap()
 }
 
+fun sortImagesByAlbum(files: List<File>): Map<String, List<String>> {
+    val resultMap = hashMapOf<String, MutableList<String>>()
+    for (file in files) {
+        (!resultMap.containsKey(file.parentFile.path)).let { resultMap.put(file.parentFile.path, mutableListOf()) }
+        resultMap[file.parentFile.path]?.add(file.path)
+    }
+    return resultMap.toMap()
+}
+
 fun getImagesFromFolder(context: Context, folder: String): List<File> {
 
     val selection = MediaStore.Images.Media.DATA + " LIKE ?"

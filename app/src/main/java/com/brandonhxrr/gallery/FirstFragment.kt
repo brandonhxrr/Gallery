@@ -90,7 +90,6 @@ class FirstFragment : Fragment() {
             val dataColumnIndex =
                 imagecursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
             photoList.add(Photo(imagecursor.getString(dataColumnIndex) ))
-            Log.d("MSGF-P",  imagecursor.getString(dataColumnIndex));
         }
         return photoList
     }

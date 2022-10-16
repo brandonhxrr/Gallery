@@ -19,6 +19,7 @@ import com.brandonhxrr.gallery.adapter.AlbumAdapter
 import com.brandonhxrr.gallery.adapter.photoAdapter
 import com.brandonhxrr.gallery.databinding.FragmentSecondBinding
 import com.bumptech.glide.Glide
+import java.io.File
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -27,6 +28,12 @@ class SecondFragment : Fragment() {
 
     private var _binding: FragmentSecondBinding? = null
     private val binding get() = _binding!!
+    private lateinit var albums: HashMap<File, List<File>>
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        albums = arguments?.get("albums") as HashMap<File, List<File>>
+    }
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -56,7 +63,8 @@ class SecondFragment : Fragment() {
         val builder = glide.asBitmap()
 
         val fol: AlbumAdapter = AlbumAdapter(builder)
-        fol.setItems(sortImagesByFolder(getAllImages(context)))
+        //fol.setItems(sortImagesByFolder(getAllImages(context)))
+        fol.setItems(albums)
 
         recyclerView.adapter = fol
 
