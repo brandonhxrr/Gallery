@@ -29,6 +29,7 @@ class Splash : AppCompatActivity() {
             putExtra("albums", folders)
         }
         startActivity(intent)
+        finish()
     }
 
     private fun checkPermissions() {
