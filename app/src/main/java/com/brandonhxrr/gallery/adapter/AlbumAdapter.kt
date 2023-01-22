@@ -1,16 +1,15 @@
 package com.brandonhxrr.gallery.adapter
 
 import android.graphics.Bitmap
-import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestBuilder
 import java.io.File
-import java.util.Comparator
 
-class AlbumAdapter(val glide: RequestBuilder<Bitmap>) : RecyclerView.Adapter<AlbumViewHolder>() {
+class AlbumAdapter(private val glide: RequestBuilder<Bitmap>) : RecyclerView.Adapter<AlbumViewHolder>() {
 
     private var items = mapOf<File, List<File>>()
+    //private var items = listOf<File>()
     private var indexes = listOf<File>()
 
     //private var items = HashMap<String, List<String>>()
@@ -23,16 +22,14 @@ class AlbumAdapter(val glide: RequestBuilder<Bitmap>) : RecyclerView.Adapter<Alb
     override fun getItemCount(): Int = indexes.size
 
     fun setItems(fileMap: Map<File, List<File>>) {
+    //fun setItems(folders: List<File>) {
         items = fileMap
-        indexes = fileMap.keys.sortedBy { t -> t.nameWithoutExtension }.toList()
+        //indexes = fileMap.keys.toList()//.sortedBy { t -> t.nameWithoutExtension }
+        indexes = fileMap.keys.toList().sortedBy { it.nameWithoutExtension }
         notifyDataSetChanged()
     }
 
-    /*fun setAlbums(albums: HashMap<String, List<String>>) {
-        items = albums
-        indexes = albums.keys.toList()
-    }*/
-
     private fun getItemAt(position: Int) = items[indexes[position]]
+    //private fun getItemAt(position: Int) = items[position]
 
 }

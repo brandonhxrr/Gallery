@@ -10,19 +10,12 @@ import java.io.File
 fun sortImagesByFolder(files: List<File>): Map<File, List<File>> {
     val resultMap = mutableMapOf<File, MutableList<File>>()
     for (file in files) {
-        (!resultMap.containsKey(file.parentFile)).let { resultMap.put(file.parentFile, mutableListOf()) }
-        resultMap[file.parentFile]?.add(file)
+        if(file.totalSpace != 0L){
+            (!resultMap.containsKey(file.parentFile)).let { resultMap.put(file.parentFile, mutableListOf()) }
+            resultMap[file.parentFile]?.add(file)
+        }
     }
-    return resultMap.toMap()
-}
-
-fun sortImagesByAlbum(files: List<File>): Map<String, List<String>> {
-    val resultMap = hashMapOf<String, MutableList<String>>()
-    for (file in files) {
-        (!resultMap.containsKey(file.parentFile.path)).let { resultMap.put(file.parentFile.path, mutableListOf()) }
-        resultMap[file.parentFile.path]?.add(file.path)
-    }
-    return resultMap.toMap()
+    return resultMap
 }
 
 fun getImagesFromFolder(context: Context, folder: String): List<File> {
@@ -57,6 +50,26 @@ private fun Cursor.getResultsFromCursor(): List<File> {
 
 
     return results
+}
+
+fun getImageVideoNumber(parent : File) : Int{
+    var imageCount = 0
+    var videoCount = 0
+
+    val imageExtensions = arrayOf("jpg", "jpeg", "png", "gif", "bmp")
+    val videoExtensions = arrayOf("mp4", "mkv", "avi", "wmv", "mov")
+
+    for (file in parent.listFiles()!!) {
+        if (file.isFile) {
+            val fileExtension = file.extension.lowercase()
+            if (imageExtensions.contains(fileExtension)) {
+                imageCount++
+            } else if (videoExtensions.contains(fileExtension)) {
+                videoCount++
+            }
+        }
+    }
+    return imageCount + videoCount
 }
 
 val projection = arrayOf(

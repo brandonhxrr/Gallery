@@ -1,17 +1,18 @@
 package com.brandonhxrr.gallery.adapter
 
 import android.graphics.Bitmap
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.os.bundleOf
-import androidx.navigation.NavGraphNavigator
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.brandonhxrr.gallery.R
-import com.brandonhxrr.gallery.ViewAlbum
+import com.brandonhxrr.gallery.getImageVideoNumber
+import com.brandonhxrr.gallery.getImagesFromFolder
 import com.bumptech.glide.RequestBuilder
 import java.io.File
 
@@ -29,22 +30,46 @@ class AlbumViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     }
 
     fun bind(files: List<File>?, glide: RequestBuilder<Bitmap>) {
-        (files?.isNotEmpty()).let {
-            val firstChild = files!![0]
-            val parent = File(firstChild.parent as String)
+    //fun bind(folder: List<File>?, glide: RequestBuilder<Bitmap>) {
 
-            title.text = parent.nameWithoutExtension
-            glide.load(firstChild).centerCrop().into(image)
+        //Log.d("PARENT100: ", folder.path)
 
-            val items = parent.listFiles()?.size!!
+        //val files = getImagesFromFolder(image.context, folder.path)
 
-            counter.text = if (items > 1)  parent.listFiles()?.size.toString() + " items" else parent.listFiles()?.size.toString() + " item"
+        //Log.d("PARENT101: ", files.size.toString())
+        if (files != null) {
+            (files.isNotEmpty()).let {
+                val firstChild = files!![0]
+                val parent = File(firstChild.parent as String)
 
-            image.setOnClickListener {
-                val bundle = bundleOf("pathAlbum" to parent.absolutePath)
-                it.findNavController().navigate(R.id.action_SecondFragment_to_ViewAlbumFragment, bundle)
+                //Log.d("PARENT99: ", parent.path)
+                //Log.d("PARENT98: ", parent.list()[0])
+                //Log.d("PARENT97: ", parent.listFiles()[0].absolutePath)
+
+
+                title.text = parent.nameWithoutExtension
+                glide.load(firstChild).centerCrop().into(image)
+
+                var items = 0
+                try{
+                    items = getImageVideoNumber(parent)
+                }catch (e : Exception){
+                    Log.d("PARENT96", "HUBO UN ERROR" + e.message)
+                }
+
+
+
+                //val items = parent.listFiles()?.size!!
+                counter.text = if (items > 1)  parent.listFiles()?.size.toString() + " items" else parent.listFiles()?.size.toString() + " item"
+
+                image.setOnClickListener {
+                    val bundle = bundleOf("pathAlbum" to parent.absolutePath)
+                    it.findNavController().navigate(R.id.action_SecondFragment_to_ViewAlbumFragment, bundle)
+                }
             }
         }
+
+
     }
 
     /*fun bind(files: List<String>?, glide: RequestBuilder<Bitmap>) {

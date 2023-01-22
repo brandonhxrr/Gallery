@@ -25,7 +25,10 @@ class Splash : AppCompatActivity() {
 
         val folders: HashMap<File, List<File>> = sortImagesByFolder(getAllImages(this)) as HashMap<File, List<File>>
 
-        val intent = Intent(this, MainActivity::class.java).apply {
+        //val folders: List<File> = getAlbums(this)
+
+        val intent = Intent(this, MainActivity::class.java)
+            .apply {
             putExtra("albums", folders)
         }
         startActivity(intent)

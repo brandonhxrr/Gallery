@@ -54,6 +54,7 @@ class MainActivity : AppCompatActivity() {
                     if (navController.currentDestination?.id == R.id.FirstFragment){
                         val bundle = bundleOf("albums" to albums)
                         navController.navigate(R.id.action_FirstFragment_to_SecondFragment, bundle)
+                        //navController.navigate(R.id.action_FirstFragment_to_SecondFragment)
                     }else if(navController.currentDestination?.id == R.id.ViewAlbumFragment) {
                         navController.popBackStack()
                     }
