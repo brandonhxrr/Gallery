@@ -1,12 +1,7 @@
 package com.brandonhxrr.gallery
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.provider.MediaStore
-import android.util.Log
-import android.util.LruCache
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,14 +25,13 @@ class SecondFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         albums = arguments?.get("albums") as HashMap<File, List<File>>
-        cleanEmptyAlbums(albums)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         _binding = FragmentSecondBinding.inflate(inflater, container, false)
         initRecyclerView(requireContext())
@@ -56,7 +50,7 @@ class SecondFragment : Fragment() {
         val glide = Glide.with(this)
         val builder = glide.asBitmap()
 
-        val fol: AlbumAdapter = AlbumAdapter(builder)
+        val fol = AlbumAdapter(builder)
         // fol.setItems(sortImagesByFolder(getAllImages(context)))
          fol.setItems(albums)
         //fol.setItems(getAlbums(context))
@@ -65,9 +59,6 @@ class SecondFragment : Fragment() {
 
         recyclerView.addOnScrollListener(
             object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                }
 
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
@@ -79,13 +70,6 @@ class SecondFragment : Fragment() {
                 }
             }
         )
-    }
-
-    fun cleanEmptyAlbums(albums : HashMap<File, List<File>>) {
-        for((album, files) in albums){
-            Log.d("ALBUM100", album.absolutePath)
-            Log.d("ALBUM101", files[0].absolutePath)
-        }
     }
 
 }

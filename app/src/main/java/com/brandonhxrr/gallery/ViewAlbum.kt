@@ -1,10 +1,7 @@
 package com.brandonhxrr.gallery
 
 import android.content.Context
-import android.database.Cursor
 import android.os.Bundle
-import android.provider.MediaStore
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,11 +9,10 @@ import android.view.ViewGroup
 import android.widget.AbsListView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.brandonhxrr.gallery.adapter.photoAdapter
+import com.brandonhxrr.gallery.adapter.PhotoAdapter
 import com.brandonhxrr.gallery.databinding.FragmentFirstBinding
 import com.bumptech.glide.Glide
 import java.io.File
-import java.util.Collections
 
 class ViewAlbum : Fragment() {
     private var pathAlbum: String? = null
@@ -34,7 +30,7 @@ class ViewAlbum : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
         initRecyclerView(requireContext())
@@ -54,12 +50,9 @@ class ViewAlbum : Fragment() {
         val builder = glide.asBitmap()
 
         recyclerView.layoutManager = GridLayoutManager(context, 4)
-        recyclerView.adapter = photoAdapter(fetchImages(), builder)
+        recyclerView.adapter = PhotoAdapter(fetchImages(), builder)
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-            }
 
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
@@ -71,10 +64,11 @@ class ViewAlbum : Fragment() {
         })
     }
 
-    fun fetchImages(): List<Photo> {
+    private fun fetchImages(): List<Photo> {
         val photoList: ArrayList<Photo> = ArrayList()
 
-        val fileList: List<File> = getImagesFromFolder(requireContext(), pathAlbum.toString())
+        //val fileList: List<File> = getImagesFromFolder(requireContext(), pathAlbum.toString())
+        val fileList : List<File> = getImagesFromAlbum(pathAlbum.toString())
 
         for (file in fileList) {
             photoList.add(Photo(file.path))
@@ -85,13 +79,4 @@ class ViewAlbum : Fragment() {
         return photoList
     }
 
-    companion object {
-        @JvmStatic
-        fun newInstance(pathAlbum: String) =
-            ViewAlbum().apply {
-                arguments = Bundle().apply {
-                    putString("pathAlbum", pathAlbum)
-                }
-            }
-    }
 }

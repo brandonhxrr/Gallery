@@ -6,7 +6,6 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.provider.MediaStore.MediaColumns
 import java.io.File
-import java.nio.ByteOrder
 
 fun sortImagesByFolder(files: List<File>): Map<File, List<File>> {
     val resultMap = mutableMapOf<File, MutableList<File>>()
@@ -19,13 +18,8 @@ fun sortImagesByFolder(files: List<File>): Map<File, List<File>> {
     return resultMap
 }
 
-fun getImagesFromFolder(context: Context, folder: String): List<File> {
-
-    val selection = MediaStore.Images.Media.DATA + " LIKE ?"
-    val sortOrder = MediaStore.Images.Media.DATE_TAKEN + " ASC"
-
-    return queryUri(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection, arrayOf("%$folder/%"), sortOrder )
-        .use { it?.getResultsFromCursor() ?: listOf() }
+fun getImagesFromAlbum(folder: String): List<File> {
+    return File(folder).listFiles().toList()
 }
 
 fun getAllImages(context: Context): List<File> {

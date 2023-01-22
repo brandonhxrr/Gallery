@@ -6,16 +6,14 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import java.io.File
-import java.io.Serializable
 
-class Splash : AppCompatActivity() {
+open class Splash : AppCompatActivity() {
 
-    protected val REQUEST_STORAGE_READ_ACCESS_PERMISSION = 101
-    protected val REQUEST_STORAGE_WRITE_ACCESS_PERMISSION = 102
+    private val REQUEST_STORAGE_READ_ACCESS_PERMISSION = 101
+    private val REQUEST_STORAGE_WRITE_ACCESS_PERMISSION = 102
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,9 +47,9 @@ class Splash : AppCompatActivity() {
         }
     }
 
-    fun hasPermission(permission: String): Boolean = ActivityCompat.checkSelfPermission(this@Splash, permission) == PackageManager.PERMISSION_GRANTED
+    private fun hasPermission(permission: String): Boolean = ActivityCompat.checkSelfPermission(this@Splash, permission) == PackageManager.PERMISSION_GRANTED
 
-    fun requestPermission(permission: String, rationale: String, requestCode: Int) {
+    private fun requestPermission(permission: String, rationale: String, requestCode: Int) {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
             showAlertDialog(getString(R.string.title_permission_needed), rationale,
                 { dialog, which ->
@@ -66,11 +64,11 @@ class Splash : AppCompatActivity() {
         }
     }
 
-    protected fun showAlertDialog(title: String?, message: String?,
-                                  onPositiveButtonClickListener: DialogInterface.OnClickListener?,
-                                  positiveText: String,
-                                  onNegativeButtonClickListener: DialogInterface.OnClickListener?,
-                                  negativeText: String) {
+    private fun showAlertDialog(title: String?, message: String?,
+                                onPositiveButtonClickListener: DialogInterface.OnClickListener?,
+                                positiveText: String,
+                                onNegativeButtonClickListener: DialogInterface.OnClickListener?,
+                                negativeText: String) {
         AlertDialog.Builder(this)
             .setTitle(title)
             .setMessage(message)

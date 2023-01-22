@@ -12,16 +12,14 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.brandonhxrr.gallery.R
 import com.brandonhxrr.gallery.getImageVideoNumber
-import com.brandonhxrr.gallery.getImagesFromFolder
 import com.bumptech.glide.RequestBuilder
 import java.io.File
 
 class AlbumViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-
-    val image = view.findViewById<ImageView>(R.id.album_image)
-    val title = view.findViewById<TextView>(R.id.album_title)
-    val counter = view.findViewById<TextView>(R.id.album_counter)
+    private val image: ImageView = view.findViewById(R.id.album_image)
+    private val title: TextView = view.findViewById(R.id.album_title)
+    private val counter: TextView = view.findViewById(R.id.album_counter)
 
     companion object {
         fun new(viewGroup: ViewGroup) = AlbumViewHolder(
@@ -39,7 +37,7 @@ class AlbumViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         //Log.d("PARENT101: ", files.size.toString())
         if (files != null) {
             (files.isNotEmpty()).let {
-                val firstChild = files!![0]
+                val firstChild = files[0]
                 val parent = File(firstChild.parent as String)
 
                 //Log.d("PARENT99: ", parent.path)

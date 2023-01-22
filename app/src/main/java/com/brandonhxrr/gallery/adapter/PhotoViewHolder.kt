@@ -4,19 +4,15 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.view.View
 import android.widget.ImageView
-import android.widget.TextView
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.brandonhxrr.gallery.Photo
 import com.brandonhxrr.gallery.PhotoView
 import com.brandonhxrr.gallery.R
-import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
-import com.bumptech.glide.RequestManager
 
-class photoViewHolder(view: View ) : RecyclerView.ViewHolder(view){
+class PhotoViewHolder(view: View ) : RecyclerView.ViewHolder(view){
 
-    val image = view.findViewById<ImageView>(R.id.item_photo)
+    private val image : ImageView = view.findViewById(R.id.item_photo)
 
     fun render(photoModel: Photo, glide: RequestBuilder<Bitmap>) {
 

@@ -43,7 +43,6 @@
         <activity
             android:name=".MainActivity"
             android:exported="false"
-            android:label="@string/app_name"
             android:theme="@style/Theme.Gallery">
             <meta-data
                 android:name="android.app.lib_name"

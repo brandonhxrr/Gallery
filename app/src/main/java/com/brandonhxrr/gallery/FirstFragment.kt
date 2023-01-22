@@ -4,17 +4,14 @@ import android.content.Context
 import android.database.Cursor
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.brandonhxrr.gallery.PhotoProvider.Companion.photoList
-import com.brandonhxrr.gallery.adapter.photoAdapter
+import com.brandonhxrr.gallery.adapter.PhotoAdapter
 import com.brandonhxrr.gallery.databinding.FragmentFirstBinding
 import com.bumptech.glide.Glide
 
@@ -24,26 +21,17 @@ class FirstFragment : Fragment() {
     private val binding get() = _binding!!
 
     companion object {
-        fun newInstance(): FirstFragment = FirstFragment()
     }
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
         initRecyclerView(requireContext())
         return binding.root
 
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        /*binding.buttonFirst.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
-        }*/
     }
 
     override fun onDestroyView() {
@@ -58,7 +46,7 @@ class FirstFragment : Fragment() {
         val builder = glide.asBitmap()
 
         recyclerView.layoutManager = GridLayoutManager(context, 4)
-        recyclerView.adapter = photoAdapter(fetchImages(), builder)
+        recyclerView.adapter = PhotoAdapter(fetchImages(), builder)
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -75,7 +63,7 @@ class FirstFragment : Fragment() {
         })
     }
 
-    fun fetchImages(): ArrayList<Photo> {
+    private fun fetchImages(): ArrayList<Photo> {
         val photoList: ArrayList<Photo> = ArrayList()
 
         val columns = arrayOf(
