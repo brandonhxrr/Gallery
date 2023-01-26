@@ -9,4 +9,10 @@
         android:layout_height="80dp"
         android:layout_margin="1dp"
         android:src="@color/seed" />
+    <ImageView
+        android:id="@+id/placeholder"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_margin="1dp"
+        android:src="@drawable/play_button" />
 </FrameLayout>
