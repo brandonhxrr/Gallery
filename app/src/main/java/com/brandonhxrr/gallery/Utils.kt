@@ -19,7 +19,10 @@ fun sortImagesByFolder(files: List<File>): Map<File, List<File>> {
 }
 
 fun getImagesFromAlbum(folder: String): List<File> {
-    return File(folder).listFiles().toList()
+    val fileExtensions = listOf("jpg", "jpeg", "png", "gif", "mp4", "mkv")
+    return File(folder).listFiles { file ->
+        file.isFile && fileExtensions.contains(file.extension)
+    }?.toList() ?: ArrayList()
 }
 
 fun getAllImages(context: Context): List<File> {

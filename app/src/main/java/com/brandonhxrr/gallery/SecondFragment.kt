@@ -14,7 +14,6 @@ import com.brandonhxrr.gallery.databinding.FragmentSecondBinding
 import com.bumptech.glide.Glide
 import java.io.File
 
-/** A simple [Fragment] subclass as the second destination in the navigation. */
 class SecondFragment : Fragment() {
 
     private var _binding: FragmentSecondBinding? = null
