@@ -70,11 +70,9 @@ class ViewAlbum : Fragment() {
         val glide = Glide.with(this)
         val builder = glide.asBitmap()
 
-        media = fetchImages()
+        media = getImagesFromAlbum(album.path)
 
         limitPage = (media!!.size / 100) + 1
-
-        Log.d("Visible106", limitPage.toString())
 
         dataList = getImagesFromPage(pageNumber, media!!)
 
@@ -87,28 +85,10 @@ class ViewAlbum : Fragment() {
         recyclerView!!.layoutManager = GridLayoutManager(context, 3)
         recyclerView!!.adapter = myAdapter
 
-        setUpPagination(glide)
+        setUpPagination()
     }
 
-    private fun fetchImages(): List<Photo> {
-        return getImagesFromAlbum(album.path)
-    }
-
-    private fun getImagesFromPage(page: Int, data: List<Photo>): List<Photo> {
-        val startIndex = (page - 1) * 100
-        val endIndex = startIndex + 100
-
-        if (startIndex >= data.size) {
-            return emptyList()
-        }
-
-        val end = if (endIndex > data.size) data.size else endIndex
-
-        return data.subList(startIndex, end)
-    }
-
-    private fun setUpPagination(glide: RequestManager) {
-        Log.d("Visible103", recyclerView.toString())
+    private fun setUpPagination() {
         recyclerView!!.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {

@@ -42,8 +42,32 @@ fun getAllImages(context: Context): List<File> {
     return videoList + imageList
 }
 
+fun getAllImagesAndVideosSortedByRecent(context: Context): List<Photo> {
+    val fileExtensions = listOf("jpg", "jpeg", "png", "gif", "mp4", "mkv")
+    val sortOrder = MediaStore.Images.Media.DATE_TAKEN + " DESC"
+    val sortOrderVideos = MediaStore.Video.Media.DATE_TAKEN + " DESC"
 
+    val imageList = queryUri(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, null, sortOrder)
+        .use { it?.getResultsFromCursor() ?: listOf() }
+    val videoList = queryUri(context, MediaStore.Video.Media.EXTERNAL_CONTENT_URI, null, null, sortOrderVideos)
+        .use { it?.getResultsFromCursor() ?: listOf() }
 
+    val resultList = (imageList + videoList).sortedWith(compareByDescending { it.lastModified() })
+    return resultList.map { file -> Photo(path = file.absolutePath) }
+}
+
+fun getImagesFromPage(page: Int, data: List<Photo>): List<Photo> {
+    val startIndex = (page - 1) * 100
+    val endIndex = startIndex + 100
+
+    if (startIndex >= data.size) {
+        return emptyList()
+    }
+
+    val end = if (endIndex > data.size) data.size else endIndex
+
+    return data.subList(startIndex, end)
+}
 
 private fun queryUri(context: Context, uri: Uri, selection: String?, selectionArgs: Array<String>?, sortOrder: String = ""): Cursor? {
     return context.contentResolver.query(
