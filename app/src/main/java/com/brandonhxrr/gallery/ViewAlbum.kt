@@ -7,15 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.brandonhxrr.gallery.adapter.PhotoAdapter
 import com.brandonhxrr.gallery.databinding.FragmentFirstBinding
 import com.bumptech.glide.Glide
+import com.google.android.material.textview.MaterialTextView
+import com.google.gson.Gson
 import java.io.File
 
 class ViewAlbum : Fragment() {
-    private var pathAlbum: String? = null
+    private lateinit var album : Album
     private var _binding: FragmentFirstBinding? = null
     private val binding get() = _binding!!
 
@@ -23,7 +26,8 @@ class ViewAlbum : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            pathAlbum = it.getString("pathAlbum")
+            val gson = Gson()
+            album = gson.fromJson(it.get("albumData") as String , Album::class.java)
         }
     }
 
@@ -34,12 +38,16 @@ class ViewAlbum : Fragment() {
 
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
         initRecyclerView(requireContext())
+
+        (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).text =
+            "${album.name} (${album.itemsNumber})"
         return binding.root
         //return inflater.inflate(R.layout.fragment_view_album, container, false)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).text = getString(R.string.app_name)
         _binding = null
     }
 
@@ -68,7 +76,7 @@ class ViewAlbum : Fragment() {
         val photoList: ArrayList<Photo> = ArrayList()
 
         //val fileList: List<File> = getImagesFromFolder(requireContext(), pathAlbum.toString())
-        val fileList : List<File> = getImagesFromAlbum(pathAlbum.toString())
+        val fileList : List<File> = getImagesFromAlbum(album.path.toString())
 
         for (file in fileList) {
             photoList.add(Photo(file.path))

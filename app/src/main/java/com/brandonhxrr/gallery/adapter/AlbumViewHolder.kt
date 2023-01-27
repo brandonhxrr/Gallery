@@ -10,9 +10,11 @@ import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.brandonhxrr.gallery.Album
 import com.brandonhxrr.gallery.R
 import com.brandonhxrr.gallery.getImageVideoNumber
 import com.bumptech.glide.RequestBuilder
+import com.google.gson.Gson
 import java.io.File
 
 class AlbumViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -61,7 +63,10 @@ class AlbumViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                 counter.text = if (items > 1) items.toString() + " items" else parent.listFiles()?.size.toString() + " item"
 
                 image.setOnClickListener {
-                    val bundle = bundleOf("pathAlbum" to parent.absolutePath)
+                    val gson = Gson()
+                    val album : Album = Album(parent.absolutePath, parent.nameWithoutExtension, items)
+                    val albumData = gson.toJson(album)
+                    val bundle = bundleOf("albumData" to albumData)
                     it.findNavController().navigate(R.id.action_SecondFragment_to_ViewAlbumFragment, bundle)
                 }
             }
