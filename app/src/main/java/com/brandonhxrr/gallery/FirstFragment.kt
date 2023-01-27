@@ -46,7 +46,7 @@ class FirstFragment : Fragment() {
         val builder = glide.asBitmap()
 
         recyclerView.layoutManager = GridLayoutManager(context, 4)
-        recyclerView.adapter = PhotoAdapter(fetchImages(), builder)
+        recyclerView.adapter = PhotoAdapter(fetchImages(), builder, R.layout.photo)
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {

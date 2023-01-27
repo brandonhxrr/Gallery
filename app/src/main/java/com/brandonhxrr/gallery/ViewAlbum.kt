@@ -78,13 +78,13 @@ class ViewAlbum : Fragment() {
 
         dataList = getImagesFromPage(pageNumber, media!!)
 
-        myAdapter = PhotoAdapter(dataList!!, builder)
+        myAdapter = PhotoAdapter(dataList!!, builder, R.layout.photo3)
 
         recyclerView!!.itemAnimator = DefaultItemAnimator()
 
         recyclerView!!.isNestedScrollingEnabled = false
 
-        recyclerView!!.layoutManager = GridLayoutManager(context, 4)
+        recyclerView!!.layoutManager = GridLayoutManager(context, 3)
         recyclerView!!.adapter = myAdapter
 
         setUpPagination(glide)
