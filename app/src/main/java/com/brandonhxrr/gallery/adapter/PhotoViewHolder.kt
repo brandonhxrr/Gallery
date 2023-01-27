@@ -2,7 +2,6 @@ package com.brandonhxrr.gallery.adapter
 
 import android.content.Intent
 import android.graphics.Bitmap
-import android.media.Image
 import android.net.Uri
 import android.view.View
 import android.widget.ImageView

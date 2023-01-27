@@ -73,16 +73,7 @@ class ViewAlbum : Fragment() {
     }
 
     private fun fetchImages(): List<Photo> {
-        val photoList: ArrayList<Photo> = ArrayList()
-
-        //val fileList: List<File> = getImagesFromFolder(requireContext(), pathAlbum.toString())
-        val fileList : List<File> = getImagesFromAlbum(album.path.toString())
-
-        for (file in fileList) {
-            photoList.add(Photo(file.path))
-        }
-
-        photoList.reverse()
+        val photoList: List<Photo> = getImagesFromAlbum(album.path)
 
         return photoList
     }

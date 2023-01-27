@@ -5,6 +5,10 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
 import android.provider.MediaStore.MediaColumns
+import com.bumptech.glide.load.data.mediastore.MediaStoreUtil
+import com.bumptech.glide.load.model.MediaStoreFileLoader
+import com.bumptech.glide.load.model.stream.MediaStoreImageThumbLoader
+import com.bumptech.glide.signature.MediaStoreSignature
 import java.io.File
 
 fun sortImagesByFolder(files: List<File>): Map<File, List<File>> {
@@ -18,18 +22,27 @@ fun sortImagesByFolder(files: List<File>): Map<File, List<File>> {
     return resultMap
 }
 
-fun getImagesFromAlbum(folder: String): List<File> {
+fun getImagesFromAlbum(folder: String): List<Photo> {
     val fileExtensions = listOf("jpg", "jpeg", "png", "gif", "mp4", "mkv")
-    return File(folder).listFiles { file ->
-        file.isFile && fileExtensions.contains(file.extension)
-    }?.toList() ?: ArrayList()
+    return File(folder)
+        .listFiles { file -> file.isFile && fileExtensions.contains(file.extension) }
+        ?.sortedWith(compareByDescending { it.lastModified() })
+        ?.map { file -> Photo(path = file.absolutePath) }
+        ?: emptyList()
 }
+
 
 fun getAllImages(context: Context): List<File> {
     val sortOrder = MediaStore.Images.Media.DATE_TAKEN + " ASC"
-    return queryUri(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, null, sortOrder)
+    val sortOrderVideos = MediaStore.Video.Media.DATE_TAKEN + " ASC"
+
+    val imageList = queryUri(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, null, sortOrder)
         .use { it?.getResultsFromCursor() ?: listOf() }
+    val videoList = queryUri(context, MediaStore.Video.Media.EXTERNAL_CONTENT_URI, null, null, sortOrderVideos)
+        .use { it?.getResultsFromCursor() ?: listOf() }
+    return videoList + imageList
 }
+
 
 
 
