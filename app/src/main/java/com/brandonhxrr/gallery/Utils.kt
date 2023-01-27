@@ -31,7 +31,6 @@ fun getImagesFromAlbum(folder: String): List<Photo> {
         ?: emptyList()
 }
 
-
 fun getAllImages(context: Context): List<File> {
     val sortOrder = MediaStore.Images.Media.DATE_TAKEN + " ASC"
     val sortOrderVideos = MediaStore.Video.Media.DATE_TAKEN + " ASC"
