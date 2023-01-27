@@ -2,25 +2,39 @@ package com.brandonhxrr.gallery
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AbsListView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.brandonhxrr.gallery.adapter.PhotoAdapter
 import com.brandonhxrr.gallery.databinding.FragmentFirstBinding
 import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
 import com.google.android.material.textview.MaterialTextView
 import com.google.gson.Gson
-import java.io.File
 
 class ViewAlbum : Fragment() {
     private lateinit var album : Album
     private var _binding: FragmentFirstBinding? = null
     private val binding get() = _binding!!
+
+    private var pastVisibleItems = 0
+    private var visibleItemCount = 0
+    private var totalItemCount = 0
+    private var loading = true
+
+    private var myAdapter: PhotoAdapter? = null
+    private var recyclerView: RecyclerView? = null
+    private var media: List<Photo>? = null
+    private var dataList: List<Photo>? = null
+
+    private var pageNumber = 1
+    private var limitPage : Int = 1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +56,6 @@ class ViewAlbum : Fragment() {
         (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).text =
             "${album.name} (${album.itemsNumber})"
         return binding.root
-        //return inflater.inflate(R.layout.fragment_view_album, container, false)
     }
 
     override fun onDestroyView() {
@@ -52,30 +65,79 @@ class ViewAlbum : Fragment() {
     }
 
     private fun initRecyclerView(context: Context) {
-        val recyclerView = binding.gridRecyclerView
+        recyclerView = binding.gridRecyclerView
 
         val glide = Glide.with(this)
         val builder = glide.asBitmap()
 
-        recyclerView.layoutManager = GridLayoutManager(context, 4)
-        recyclerView.adapter = PhotoAdapter(fetchImages(), builder)
+        media = fetchImages()
 
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        limitPage = (media!!.size / 100) + 1
 
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                when(newState) {
-                    RecyclerView.SCROLL_STATE_IDLE -> glide.resumeRequests()
-                    AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL, AbsListView.OnScrollListener.SCROLL_STATE_FLING -> glide.pauseRequests()
-                }
-            }
-        })
+        Log.d("Visible106", limitPage.toString())
+
+        dataList = getImagesFromPage(pageNumber, media!!)
+
+        myAdapter = PhotoAdapter(dataList!!, builder)
+
+        recyclerView!!.itemAnimator = DefaultItemAnimator()
+
+        recyclerView!!.isNestedScrollingEnabled = false
+
+        recyclerView!!.layoutManager = GridLayoutManager(context, 4)
+        recyclerView!!.adapter = myAdapter
+
+        setUpPagination(glide)
     }
 
     private fun fetchImages(): List<Photo> {
-        val photoList: List<Photo> = getImagesFromAlbum(album.path)
-
-        return photoList
+        return getImagesFromAlbum(album.path)
     }
 
+    private fun getImagesFromPage(page: Int, data: List<Photo>): List<Photo> {
+        val startIndex = (page - 1) * 100
+        val endIndex = startIndex + 100
+
+        if (startIndex >= data.size) {
+            return emptyList()
+        }
+
+        val end = if (endIndex > data.size) data.size else endIndex
+
+        return data.subList(startIndex, end)
+    }
+
+    private fun setUpPagination(glide: RequestManager) {
+        Log.d("Visible103", recyclerView.toString())
+        recyclerView!!.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+               if(dy > 0) {
+                visibleItemCount = recyclerView.childCount
+                totalItemCount = recyclerView.layoutManager!!.itemCount
+                pastVisibleItems = (recyclerView.layoutManager as GridLayoutManager).findFirstVisibleItemPosition()
+
+                    if(loading) {
+                        if(visibleItemCount + pastVisibleItems >= totalItemCount) {
+                            loading = false
+                            if(pageNumber < limitPage) {
+                                pageNumber++
+                                dataList = dataList?.plus(getImagesFromPage(pageNumber, media!!))
+                                myAdapter!!.dataList = dataList as List<Photo>
+                                myAdapter!!.notifyDataSetChanged()
+                                loading = true
+                            }
+                        }
+                   }
+                }
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                onScrolled(recyclerView, recyclerView.scrollX, recyclerView.scrollY)
+            }
+        })
+    }
 }
