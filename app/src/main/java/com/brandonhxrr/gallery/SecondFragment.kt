@@ -31,7 +31,6 @@ class SecondFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         _binding = FragmentSecondBinding.inflate(inflater, container, false)
         initRecyclerView(requireContext())
         return binding.root
@@ -50,9 +49,7 @@ class SecondFragment : Fragment() {
         val builder = glide.asBitmap()
 
         val fol = AlbumAdapter(builder)
-        // fol.setItems(sortImagesByFolder(getAllImages(context)))
-         fol.setItems(albums)
-        //fol.setItems(getAlbums(context))
+        fol.setItems(albums)
 
         recyclerView.adapter = fol
 

@@ -2,7 +2,6 @@ package com.brandonhxrr.gallery
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.brandonhxrr.gallery.adapter.PhotoAdapter
 import com.brandonhxrr.gallery.databinding.FragmentFirstBinding
 import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestManager
 import com.google.android.material.textview.MaterialTextView
 import com.google.gson.Gson
 
@@ -31,11 +29,6 @@ class ViewAlbum : Fragment() {
     private var myAdapter: PhotoAdapter? = null
     private var recyclerView: RecyclerView? = null
     private var media: List<Photo>? = null
-    private var dataList: List<Photo>? = null
-
-    private var pageNumber = 1
-    private var limitPage : Int = 1
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,16 +65,10 @@ class ViewAlbum : Fragment() {
 
         media = getImagesFromAlbum(album.path)
 
-        limitPage = (media!!.size / 100) + 1
-
-        dataList = getImagesFromPage(pageNumber, media!!)
-
-        myAdapter = PhotoAdapter(dataList!!, builder, R.layout.photo3)
+        myAdapter = PhotoAdapter(media!!, builder, R.layout.photo3)
 
         recyclerView!!.itemAnimator = DefaultItemAnimator()
-
         recyclerView!!.isNestedScrollingEnabled = false
-
         recyclerView!!.layoutManager = GridLayoutManager(context, 3)
         recyclerView!!.adapter = myAdapter
 
@@ -95,20 +82,15 @@ class ViewAlbum : Fragment() {
                 super.onScrolled(recyclerView, dx, dy)
 
                if(dy > 0) {
-                visibleItemCount = recyclerView.childCount
-                totalItemCount = recyclerView.layoutManager!!.itemCount
-                pastVisibleItems = (recyclerView.layoutManager as GridLayoutManager).findFirstVisibleItemPosition()
+                    visibleItemCount = recyclerView.childCount
+                    totalItemCount = recyclerView.layoutManager!!.itemCount
+                    pastVisibleItems = (recyclerView.layoutManager as GridLayoutManager).findFirstVisibleItemPosition()
 
                     if(loading) {
                         if(visibleItemCount + pastVisibleItems >= totalItemCount) {
                             loading = false
-                            if(pageNumber < limitPage) {
-                                pageNumber++
-                                dataList = dataList?.plus(getImagesFromPage(pageNumber, media!!))
-                                myAdapter!!.dataList = dataList as List<Photo>
-                                myAdapter!!.notifyDataSetChanged()
-                                loading = true
-                            }
+                            myAdapter!!.addMoreData()
+                            loading = true
                         }
                    }
                 }

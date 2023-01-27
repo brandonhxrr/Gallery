@@ -27,7 +27,7 @@ fun getImagesFromAlbum(folder: String): List<Photo> {
     return File(folder)
         .listFiles { file -> file.isFile && fileExtensions.contains(file.extension) }
         ?.sortedWith(compareByDescending { it.lastModified() })
-        ?.map { file -> Photo(path = file.absolutePath) }
+        ?.map { file -> Photo(path = file.absolutePath, position = 0) }
         ?: emptyList()
 }
 
@@ -53,7 +53,7 @@ fun getAllImagesAndVideosSortedByRecent(context: Context): List<Photo> {
         .use { it?.getResultsFromCursor() ?: listOf() }
 
     val resultList = (imageList + videoList).sortedWith(compareByDescending { it.lastModified() })
-    return resultList.map { file -> Photo(path = file.absolutePath) }
+    return resultList.map { file -> Photo(path = file.absolutePath, position = 0) }
 }
 
 fun getImagesFromPage(page: Int, data: List<Photo>): List<Photo> {

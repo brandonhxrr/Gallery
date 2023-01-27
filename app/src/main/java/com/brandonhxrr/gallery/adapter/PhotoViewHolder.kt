@@ -10,6 +10,7 @@ import com.brandonhxrr.gallery.Photo
 import com.brandonhxrr.gallery.PhotoView
 import com.brandonhxrr.gallery.R
 import com.bumptech.glide.RequestBuilder
+import com.google.gson.Gson
 import java.io.File
 
 class PhotoViewHolder(view: View ) : RecyclerView.ViewHolder(view){
@@ -17,7 +18,7 @@ class PhotoViewHolder(view: View ) : RecyclerView.ViewHolder(view){
     private val image : ImageView = view.findViewById(R.id.item_photo)
     private val videoPlaceholder : ImageView = view.findViewById(R.id.placeholder)
 
-    fun render(photoModel: Photo, glide: RequestBuilder<Bitmap>) {
+    fun render(photoModel: Photo, glide: RequestBuilder<Bitmap>, dataList: List<Photo>) {
 
         val imageExtensions = arrayOf("jpg", "jpeg", "png", "gif", "bmp")
         val videoExtensions = arrayOf("mp4", "mkv", "avi", "wmv", "mov")
@@ -30,8 +31,14 @@ class PhotoViewHolder(view: View ) : RecyclerView.ViewHolder(view){
             videoPlaceholder.visibility = View.INVISIBLE
 
             image.setOnClickListener {
+
+                val gson = Gson()
+                val data = gson.toJson(dataList)
+
                 val intent = Intent(it.context, PhotoView::class.java)
                 intent.putExtra("path", photoModel.path)
+                intent.putExtra("data", data)
+                intent.putExtra("position", photoModel.position)
                 it.context.startActivity(intent)
             }
         }else if(extension in videoExtensions) {
@@ -42,6 +49,5 @@ class PhotoViewHolder(view: View ) : RecyclerView.ViewHolder(view){
                 it.context.startActivity(intent)
             }
         }
-
     }
 }
