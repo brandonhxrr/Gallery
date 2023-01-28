@@ -1,18 +1,18 @@
 package com.brandonhxrr.gallery
 
 import android.os.Bundle
-import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.core.view.WindowCompat
 import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
 import com.brandonhxrr.gallery.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 class MainActivity : AppCompatActivity() {
 
-    //private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var bottomNavView: BottomNavigationView
 
@@ -59,9 +59,16 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    /*override fun onSupportNavigateUp(): Boolean {
+    override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
-        return navController.navigateUp(appBarConfiguration)
+        val appBarConfiguration = AppBarConfiguration(navController.graph)
+
+        val navUp = navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
-    }*/
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        supportActionBar?.setDisplayShowHomeEnabled(false)
+
+        return navUp
+    }
 }

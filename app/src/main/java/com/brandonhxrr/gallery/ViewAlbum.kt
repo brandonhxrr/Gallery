@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +19,7 @@ import com.google.gson.Gson
 
 class ViewAlbum : Fragment() {
     private lateinit var album : Album
+    private lateinit var toolbar: Toolbar
     private var _binding: FragmentFirstBinding? = null
     private val binding get() = _binding!!
 
@@ -34,7 +36,7 @@ class ViewAlbum : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             val gson = Gson()
-            album = gson.fromJson(it.get("albumData") as String , Album::class.java)
+            album = gson.fromJson(it.getString("albumData"), Album::class.java)
         }
     }
 
@@ -48,12 +50,21 @@ class ViewAlbum : Fragment() {
 
         (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).text =
             "${album.name} (${album.itemsNumber})"
+        toolbar = (activity as AppCompatActivity).findViewById(R.id.toolbar)
+
+        (activity as AppCompatActivity).setSupportActionBar(toolbar)
+
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(true)
+        (activity as AppCompatActivity).supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back)
         return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).text = getString(R.string.app_name)
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(false)
         _binding = null
     }
 

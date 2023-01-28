@@ -1,9 +1,9 @@
 package com.brandonhxrr.gallery
 
 import android.os.Bundle
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.res.ResourcesCompat
 import androidx.viewpager.widget.ViewPager
 import com.brandonhxrr.gallery.adapter.ViewPagerAdapter
 import com.google.gson.Gson
@@ -12,15 +12,18 @@ import com.google.gson.Gson
 class PhotoView : AppCompatActivity() {
 
     private var media: List<Photo>? = null
-    lateinit var viewPager: ViewPager
-    lateinit var viewPagerAdapter: ViewPagerAdapter
-    var position: Int = 0
+    private lateinit var viewPager: ViewPager
+    private lateinit var viewPagerAdapter: ViewPagerAdapter
+    private lateinit var fileTitle: TextView
+    private var position: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_photo_view)
 
-        val toolbar: Toolbar = findViewById<Toolbar>(R.id.toolbar)
+        fileTitle = findViewById(R.id.fileTitle)
+
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -36,8 +39,13 @@ class PhotoView : AppCompatActivity() {
 
         viewPager = findViewById(R.id.viewPager)
 
-        viewPagerAdapter = ViewPagerAdapter(this, media!!)
+        viewPagerAdapter = ViewPagerAdapter(this, media!!, fileTitle)
         viewPager.adapter = viewPagerAdapter
         viewPager.currentItem = position
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
     }
 }

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.brandonhxrr.gallery.Photo
@@ -14,7 +15,11 @@ import com.brandonhxrr.gallery.R
 import com.bumptech.glide.Glide
 import java.io.File
 
-class ViewPagerAdapter(val context: Context, private val imageList: List<Photo>) : PagerAdapter() {
+class ViewPagerAdapter(
+    val context: Context,
+    private val imageList: List<Photo>,
+    val fileTitle: TextView
+) : PagerAdapter() {
     override fun getCount(): Int {
         return imageList.size
     }
@@ -31,6 +36,8 @@ class ViewPagerAdapter(val context: Context, private val imageList: List<Photo>)
         val playButton: ImageView = itemView.findViewById(R.id.play_button)
 
         val file = File(imageList[position].path)
+
+        fileTitle.text = file.name
 
         val videoExtensions = arrayOf("mp4", "mkv", "avi", "wmv", "mov")
 
