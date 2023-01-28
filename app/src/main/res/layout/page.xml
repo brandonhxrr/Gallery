@@ -10,5 +10,13 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_album"
         android:layout_centerInParent="true" />
+    <ImageView
+        android:id="@+id/play_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/play_button2"
+        android:visibility="invisible"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"/>
 
 </RelativeLayout>

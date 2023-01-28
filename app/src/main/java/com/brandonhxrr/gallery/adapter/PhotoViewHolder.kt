@@ -3,6 +3,7 @@ package com.brandonhxrr.gallery.adapter
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
+import android.opengl.Visibility
 import android.view.View
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
@@ -28,12 +29,12 @@ class PhotoViewHolder(view: View ) : RecyclerView.ViewHolder(view){
         glide.load(photoModel.path).centerCrop().into(image)
 
         if(extension in imageExtensions){
-            videoPlaceholder.visibility = View.INVISIBLE
 
             image.setOnClickListener {
 
+                val limit : Int = if(dataList.size > 2000) 2000 else dataList.size
                 val gson = Gson()
-                val data = gson.toJson(dataList)
+                val data = gson.toJson(dataList.subList(0, limit))
 
                 val intent = Intent(it.context, PhotoView::class.java)
                 intent.putExtra("path", photoModel.path)
@@ -41,6 +42,7 @@ class PhotoViewHolder(view: View ) : RecyclerView.ViewHolder(view){
                 intent.putExtra("position", photoModel.position)
                 it.context.startActivity(intent)
             }
+            videoPlaceholder.visibility = View.INVISIBLE
         }else if(extension in videoExtensions) {
             image.setOnClickListener {
                 val videoUri: Uri = Uri.parse(photoModel.path)
