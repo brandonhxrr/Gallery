@@ -35,6 +35,7 @@
         android:layout_height="match_parent"
         android:text="@string/app_name"
         android:textColor="@color/md_theme_dark_background"
+        android:fontFamily="@font/inter_medium"
         android:textSize="20sp"
         android:gravity="center_vertical"/>
     </androidx.appcompat.widget.Toolbar>
