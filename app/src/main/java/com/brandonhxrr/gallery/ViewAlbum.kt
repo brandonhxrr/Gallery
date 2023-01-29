@@ -57,6 +57,7 @@ class ViewAlbum : Fragment() {
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(true)
         (activity as AppCompatActivity).supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back)
+        (activity as AppCompatActivity).supportActionBar?.title = ""
         return binding.root
     }
 

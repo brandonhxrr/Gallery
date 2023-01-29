@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.brandonhxrr.gallery.Photo
@@ -17,8 +16,7 @@ import java.io.File
 
 class ViewPagerAdapter(
     val context: Context,
-    private val imageList: List<Photo>,
-    val fileTitle: TextView
+    private val imageList: List<Photo>
 ) : PagerAdapter() {
     override fun getCount(): Int {
         return imageList.size
@@ -35,31 +33,31 @@ class ViewPagerAdapter(
         val imageView: ImageView = itemView.findViewById(R.id.displayImage)
         val playButton: ImageView = itemView.findViewById(R.id.play_button)
 
-        val file = File(imageList[position].path)
-
-        fileTitle.text = file.name
-
         val videoExtensions = arrayOf("mp4", "mkv", "avi", "wmv", "mov")
 
-        if(file.extension in videoExtensions){
-            playButton.visibility = View.VISIBLE
-
-            imageView.setOnClickListener {
-                val videoUri: Uri = Uri.parse(file.path)
-                val intent = Intent(Intent.ACTION_VIEW,videoUri)
-                intent.setDataAndType(videoUri, "video/*")
-                it.context.startActivity(intent)
-            }
-        }
-
         imageList[position].let {
+            val file = File(it.path)
+
+            //fileTitle.text = if(position == 0) File(imageList[position].path).name else File(imageList[position-1].path).name
+
+            if(file.extension in videoExtensions){
+                playButton.visibility = View.VISIBLE
+
+                imageView.setOnClickListener {
+                    val videoUri: Uri = Uri.parse(file.path)
+                    val intent = Intent(Intent.ACTION_VIEW,videoUri)
+                    intent.setDataAndType(videoUri, "video/*")
+                    context.startActivity(intent)
+                }
+            }
+
             Glide.with(context)
                 .load(it.path)
-                .into(imageView);
+                .into(imageView)
         }
 
         val vp = container as ViewPager
-        vp.addView(itemView, 0)
+        vp.addView(itemView)
 
         return itemView
     }

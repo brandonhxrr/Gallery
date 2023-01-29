@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.viewpager.widget.ViewPager
 import com.brandonhxrr.gallery.adapter.ViewPagerAdapter
 import com.google.gson.Gson
+import java.io.File
 
 
 class PhotoView : AppCompatActivity() {
@@ -29,6 +30,7 @@ class PhotoView : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back)
+        supportActionBar?.title = ""
 
         val bundle = intent.extras
         val path = bundle?.getString("path")
@@ -39,8 +41,16 @@ class PhotoView : AppCompatActivity() {
 
         viewPager = findViewById(R.id.viewPager)
 
-        viewPagerAdapter = ViewPagerAdapter(this, media!!, fileTitle)
+        viewPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener(){
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                fileTitle.text = File(media!![position].path).name
+            }
+        })
+
+        viewPagerAdapter = ViewPagerAdapter(this, media!!)
         viewPager.adapter = viewPagerAdapter
+        fileTitle.text = File(media!![position].path).name
         viewPager.currentItem = position
     }
 
