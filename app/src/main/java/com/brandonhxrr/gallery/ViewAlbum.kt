@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -50,6 +51,8 @@ class ViewAlbum : Fragment() {
 
         (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).text =
             "${album.name} (${album.itemsNumber})"
+        (activity as AppCompatActivity).findViewById<ImageView>(R.id.app_logo).visibility = View.GONE
+
         toolbar = (activity as AppCompatActivity).findViewById(R.id.toolbar)
 
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
@@ -64,6 +67,7 @@ class ViewAlbum : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).text = getString(R.string.app_name)
+        (activity as AppCompatActivity).findViewById<ImageView>(R.id.app_logo).visibility = View.VISIBLE
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(false)
         _binding = null
