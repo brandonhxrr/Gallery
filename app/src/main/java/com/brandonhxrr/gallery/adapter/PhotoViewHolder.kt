@@ -1,5 +1,7 @@
 package com.brandonhxrr.gallery.adapter
 
+import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -36,11 +38,13 @@ class PhotoViewHolder(view: View ) : RecyclerView.ViewHolder(view){
                 val gson = Gson()
                 val data = gson.toJson(dataList.subList(0, limit))
 
+                val activityOptions: ActivityOptions = ActivityOptions.makeSceneTransitionAnimation(it.context as Activity)
+
                 val intent = Intent(it.context, PhotoView::class.java)
                 intent.putExtra("path", photoModel.path)
                 intent.putExtra("data", data)
                 intent.putExtra("position", photoModel.position)
-                it.context.startActivity(intent)
+                it.context.startActivity(intent, activityOptions.toBundle())
             }
             videoPlaceholder.visibility = View.INVISIBLE
         }else if(extension in videoExtensions) {
