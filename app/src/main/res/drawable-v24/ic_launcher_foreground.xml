@@ -4,13 +4,13 @@
     android:height="108dp"
     android:viewportWidth="250"
     android:viewportHeight="250">
-  <group android:scaleX="0.91"
-      android:scaleY="0.91"
-      android:translateX="11.25"
-      android:translateY="11.25">
+  <group android:scaleX="0.7"
+      android:scaleY="0.7"
+      android:translateX="37.5"
+      android:translateY="37.5">
     <group>
       <clip-path
-          android:pathData="M125,0L125,0A125,125 0,0 1,250 125L250,125A125,125 0,0 1,125 250L125,250A125,125 0,0 1,0 125L0,125A125,125 0,0 1,125 0z"/>
+          android:pathData="M0,0h250v250h-250z"/>
       <path
           android:pathData="M0,0H250V250H0V0Z"
           android:fillColor="#ffffff"/>
