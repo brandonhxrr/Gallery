@@ -1,12 +1,21 @@
 package com.brandonhxrr.gallery.adapter
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.transition.Slide
+import androidx.transition.Transition
+import androidx.transition.TransitionManager
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.brandonhxrr.gallery.Photo
@@ -18,6 +27,12 @@ class ViewPagerAdapter(
     val context: Context,
     private val imageList: List<Photo>
 ) : PagerAdapter() {
+
+    private var hidden: Boolean = true
+    private val window = (context as Activity).window
+    private var toolbar: Toolbar = (context as Activity).findViewById(R.id.toolbar)
+
+    private val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
     override fun getCount(): Int {
         return imageList.size
     }
@@ -27,6 +42,8 @@ class ViewPagerAdapter(
     }
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
+        windowInsetsController.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
         val itemView: View =  (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(R.layout.page, null)
 
@@ -38,8 +55,6 @@ class ViewPagerAdapter(
         imageList[position].let {
             val file = File(it.path)
 
-            //fileTitle.text = if(position == 0) File(imageList[position].path).name else File(imageList[position-1].path).name
-
             if(file.extension in videoExtensions){
                 playButton.visibility = View.VISIBLE
 
@@ -49,6 +64,10 @@ class ViewPagerAdapter(
                     intent.setDataAndType(videoUri, "video/*")
                     context.startActivity(intent)
                 }
+            }else {
+                imageView.setOnClickListener {
+                    hideStatusBar()
+                }
             }
 
             Glide.with(context)
@@ -56,10 +75,26 @@ class ViewPagerAdapter(
                 .into(imageView)
         }
 
-        val vp = container as ViewPager
-        vp.addView(itemView)
+        (container as ViewPager).addView(itemView)
 
         return itemView
+    }
+
+    private fun hideStatusBar(){
+        val transition: Transition = Slide(Gravity.TOP)
+        transition.duration = 200
+        transition.addTarget(toolbar)
+
+        if(hidden){
+            TransitionManager.beginDelayedTransition(toolbar, transition)
+            toolbar.visibility = View.GONE
+            windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+        }else {
+            TransitionManager.beginDelayedTransition(toolbar, transition)
+            toolbar.visibility = View.VISIBLE
+            windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
+        }
+        hidden = !hidden
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {

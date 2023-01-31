@@ -7,7 +7,7 @@
     <ImageView
         android:id="@+id/displayImage"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:src="@drawable/ic_album"
         android:layout_centerInParent="true" />
     <ImageView

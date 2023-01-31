@@ -1,5 +1,5 @@
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Base.Theme.Gallery" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/md_theme_light_primary</item>
         <item name="colorOnPrimary">@color/md_theme_light_onPrimary</item>
@@ -35,5 +35,10 @@
 
     <style name="TextViewStyle" parent="Widget.MaterialComponents.TextView">
         <item name="android:textColor">@color/md_theme_light_onSurface</item>
+    </style>
+
+    <style name="AppTheme.PreviewWallpaper" parent="Base.Theme.Gallery">
+        <item name="android:immersive">true</item>
+        <item name="android:statusBarColor">@color/white_transparent</item>
     </style>
 </resources>

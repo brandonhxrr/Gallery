@@ -1,14 +1,17 @@
 package com.brandonhxrr.gallery
 
 import android.os.Bundle
+import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.viewpager.widget.ViewPager
 import com.brandonhxrr.gallery.adapter.ViewPagerAdapter
 import com.google.gson.Gson
 import java.io.File
-
 
 class PhotoView : AppCompatActivity() {
 
@@ -16,15 +19,28 @@ class PhotoView : AppCompatActivity() {
     private lateinit var viewPager: ViewPager
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private lateinit var fileTitle: TextView
+    private lateinit var container: ConstraintLayout
+    private lateinit var toolbar: Toolbar
     private var position: Int = 0
+    private lateinit var windowInsetsController : WindowInsetsControllerCompat
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+        windowInsetsController.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+
         setContentView(R.layout.activity_photo_view)
 
         fileTitle = findViewById(R.id.fileTitle)
+        container = findViewById(R.id.constraintContainer)
 
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        toolbar = findViewById(R.id.toolbar)
+        val params = toolbar.layoutParams as ViewGroup.MarginLayoutParams
+        params.topMargin = getStatusBarHeight()
+        toolbar.layoutParams = params
         setSupportActionBar(toolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -53,9 +69,15 @@ class PhotoView : AppCompatActivity() {
         fileTitle.text = File(media!![position].path).name
         viewPager.currentItem = position
     }
-
     override fun onSupportNavigateUp(): Boolean {
         onBackPressedDispatcher.onBackPressed()
         return true
+    }
+
+    private fun getStatusBarHeight(): Int {
+        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        return if (resourceId != 0) {
+            resources.getDimensionPixelSize(resourceId)
+        } else 0
     }
 }

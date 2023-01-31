@@ -35,6 +35,8 @@
         </activity>
         <activity
             android:name=".PhotoView"
+            android:immersive="true"
+            android:theme="@style/AppTheme.PreviewWallpaper"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
