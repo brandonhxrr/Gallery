@@ -40,5 +40,6 @@
     <style name="AppTheme.PreviewWallpaper" parent="Base.Theme.Gallery">
         <item name="android:immersive">true</item>
         <item name="android:statusBarColor">@color/white_transparent</item>
+        <item name="android:navigationBarColor">@color/white_transparent</item>
     </style>
 </resources>
