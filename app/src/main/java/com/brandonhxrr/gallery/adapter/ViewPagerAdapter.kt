@@ -17,10 +17,11 @@ import androidx.transition.Slide
 import androidx.transition.Transition
 import androidx.transition.TransitionManager
 import androidx.viewpager.widget.PagerAdapter
-import androidx.viewpager.widget.ViewPager
 import com.brandonhxrr.gallery.Photo
 import com.brandonhxrr.gallery.R
+import com.brandonhxrr.gallery.CustomViewPager
 import com.bumptech.glide.Glide
+import com.github.chrisbanes.photoview.PhotoView
 import java.io.File
 
 class ViewPagerAdapter(
@@ -47,7 +48,7 @@ class ViewPagerAdapter(
 
         val itemView: View =  (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(R.layout.page, null)
 
-        val imageView: ImageView = itemView.findViewById(R.id.displayImage)
+        val imageView: PhotoView = itemView.findViewById(R.id.displayImage)
         val playButton: ImageView = itemView.findViewById(R.id.play_button)
 
         val videoExtensions = arrayOf("mp4", "mkv", "avi", "wmv", "mov")
@@ -75,7 +76,7 @@ class ViewPagerAdapter(
                 .into(imageView)
         }
 
-        (container as ViewPager).addView(itemView)
+        (container as CustomViewPager).addView(itemView)
 
         return itemView
     }
@@ -98,7 +99,7 @@ class ViewPagerAdapter(
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-        val vp = container as ViewPager
+        val vp = container as CustomViewPager
         val view = `object` as View
         vp.removeView(view)
     }

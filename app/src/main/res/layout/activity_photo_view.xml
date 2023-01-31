@@ -9,7 +9,7 @@
     android:orientation="vertical"
     tools:context=".PhotoView">
 
-    <androidx.viewpager.widget.ViewPager
+    <com.brandonhxrr.gallery.CustomViewPager
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

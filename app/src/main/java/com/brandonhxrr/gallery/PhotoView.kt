@@ -16,7 +16,7 @@ import java.io.File
 class PhotoView : AppCompatActivity() {
 
     private var media: List<Photo>? = null
-    private lateinit var viewPager: ViewPager
+    private lateinit var viewPager: CustomViewPager
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private lateinit var fileTitle: TextView
     private lateinit var container: ConstraintLayout
