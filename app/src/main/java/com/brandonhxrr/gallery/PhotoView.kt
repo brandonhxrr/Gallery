@@ -1,12 +1,17 @@
 package com.brandonhxrr.gallery
 
+import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.viewpager.widget.ViewPager
 import com.brandonhxrr.gallery.adapter.ViewPagerAdapter
@@ -25,7 +30,11 @@ class PhotoView : AppCompatActivity() {
     private lateinit var photoDate: TextView
     private lateinit var photoTime: TextView
     private lateinit var container: ConstraintLayout
+    private lateinit var bottomContainer: Toolbar
     private lateinit var toolbar: Toolbar
+    private lateinit var btnDelete: ImageButton
+    private lateinit var btnShare: ImageButton
+    private lateinit var btnMenu: ImageButton
     private var position: Int = 0
     private lateinit var windowInsetsController : WindowInsetsControllerCompat
 
@@ -42,6 +51,11 @@ class PhotoView : AppCompatActivity() {
         photoDate = findViewById(R.id.photo_date)
         photoTime = findViewById(R.id.photo_time)
         container = findViewById(R.id.constraintContainer)
+
+        bottomContainer = findViewById(R.id.bottom_container)
+        btnDelete = findViewById(R.id.btn_delete)
+        btnShare = findViewById(R.id.btn_share)
+        btnMenu = findViewById(R.id.btn_menu)
 
         toolbar = findViewById(R.id.toolbar)
         val params = toolbar.layoutParams as ViewGroup.MarginLayoutParams
@@ -75,6 +89,11 @@ class PhotoView : AppCompatActivity() {
         viewPager.adapter = viewPagerAdapter
         setDateTime(position)
         viewPager.currentItem = position
+
+        toolbar.visibility = View.GONE
+        bottomContainer.visibility = View.GONE
+        windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+        container.setBackgroundColor(Color.BLACK)
     }
     override fun onSupportNavigateUp(): Boolean {
         onBackPressedDispatcher.onBackPressed()
