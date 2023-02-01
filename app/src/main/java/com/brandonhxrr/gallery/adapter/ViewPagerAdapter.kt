@@ -1,8 +1,10 @@
 package com.brandonhxrr.gallery.adapter
 
+import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -10,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.widget.Toolbar
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -29,9 +32,10 @@ class ViewPagerAdapter(
     private val imageList: List<Photo>
 ) : PagerAdapter() {
 
-    private var hidden: Boolean = true
+    private var hidden: Boolean = false
     private val window = (context as Activity).window
     private var toolbar: Toolbar = (context as Activity).findViewById(R.id.toolbar)
+    private var constraintContainer: ConstraintLayout = (context as Activity).findViewById(R.id.constraintContainer)
 
     private val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
     override fun getCount(): Int {
@@ -50,6 +54,10 @@ class ViewPagerAdapter(
 
         val imageView: PhotoView = itemView.findViewById(R.id.displayImage)
         val playButton: ImageView = itemView.findViewById(R.id.play_button)
+
+        toolbar.visibility = View.GONE
+        windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+        constraintContainer.setBackgroundColor(Color.BLACK)
 
         val videoExtensions = arrayOf("mp4", "mkv", "avi", "wmv", "mov")
 
@@ -90,10 +98,18 @@ class ViewPagerAdapter(
             TransitionManager.beginDelayedTransition(toolbar, transition)
             toolbar.visibility = View.GONE
             windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+
+            val anim = ObjectAnimator.ofArgb(constraintContainer, "backgroundColor", Color.WHITE, Color.BLACK)
+            anim.duration = 200
+            anim.start()
         }else {
             TransitionManager.beginDelayedTransition(toolbar, transition)
             toolbar.visibility = View.VISIBLE
             windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
+
+            val anim = ObjectAnimator.ofArgb(constraintContainer, "backgroundColor", Color.BLACK, Color.WHITE)
+            anim.duration = 200
+            anim.start()
         }
         hidden = !hidden
     }
