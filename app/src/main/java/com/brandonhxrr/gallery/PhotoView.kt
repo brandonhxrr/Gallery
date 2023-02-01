@@ -109,6 +109,15 @@ class PhotoView : AppCompatActivity() {
         btnDelete.setOnClickListener {
             showMenu(it, R.menu.menu_delete)
         }
+
+        btnShare.setOnClickListener {
+            val intent = Intent(Intent.ACTION_SEND)
+            val file = File(media!![position].path)
+            intent.type = if (imageExtensions.contains(file.extension)) "image/*" else "video/*"
+            val uri = FileProvider.getUriForFile(this, "${this.packageName}.provider", file)
+            intent.putExtra(Intent.EXTRA_STREAM, uri)
+            startActivity(Intent.createChooser(intent, "Share"))
+        }
     }
     override fun onSupportNavigateUp(): Boolean {
         onBackPressedDispatcher.onBackPressed()
