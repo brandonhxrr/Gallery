@@ -11,6 +11,10 @@ import com.bumptech.glide.load.model.stream.MediaStoreImageThumbLoader
 import com.bumptech.glide.signature.MediaStoreSignature
 import java.io.File
 
+val imageExtensions = arrayOf("jpg", "jpeg", "png", "gif", "bmp")
+val videoExtensions = arrayOf("mp4", "mkv", "avi", "wmv", "mov")
+val fileExtensions = listOf("jpg", "jpeg", "png", "gif", "mp4", "mkv")
+
 fun sortImagesByFolder(files: List<File>): Map<File, List<File>> {
     val resultMap = mutableMapOf<File, MutableList<File>>()
     for (file in files) {
@@ -23,7 +27,6 @@ fun sortImagesByFolder(files: List<File>): Map<File, List<File>> {
 }
 
 fun getImagesFromAlbum(folder: String): List<Photo> {
-    val fileExtensions = listOf("jpg", "jpeg", "png", "gif", "mp4", "mkv")
     return File(folder)
         .listFiles { file -> file.isFile && fileExtensions.contains(file.extension) }
         ?.sortedWith(compareByDescending { it.lastModified() })
@@ -92,9 +95,6 @@ private fun Cursor.getResultsFromCursor(): List<File> {
 fun getImageVideoNumber(parent : File) : Int{
     var imageCount = 0
     var videoCount = 0
-
-    val imageExtensions = arrayOf("jpg", "jpeg", "png", "gif", "bmp")
-    val videoExtensions = arrayOf("mp4", "mkv", "avi", "wmv", "mov")
 
     for (file in parent.listFiles()!!) {
         if (file.isFile) {

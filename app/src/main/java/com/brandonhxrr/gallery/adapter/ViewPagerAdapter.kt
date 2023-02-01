@@ -30,7 +30,7 @@ import java.io.File
 
 class ViewPagerAdapter(
     val context: Context,
-    private val imageList: List<Photo>
+    var imageList: List<Photo>
 ) : PagerAdapter() {
 
     private var hidden: Boolean = false
@@ -127,5 +127,10 @@ class ViewPagerAdapter(
         val vp = container as CustomViewPager
         val view = `object` as View
         vp.removeView(view)
+    }
+
+    fun updateData(media: List<Photo>) {
+        imageList = media
+        this.notifyDataSetChanged()
     }
 }

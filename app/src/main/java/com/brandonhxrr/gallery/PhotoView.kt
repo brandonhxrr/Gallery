@@ -1,20 +1,31 @@
 package com.brandonhxrr.gallery
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.InsetDrawable
+import android.os.Build
 import android.os.Bundle
+import android.util.TypedValue
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.annotation.MenuRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.FileProvider
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.viewpager.widget.ViewPager
 import com.brandonhxrr.gallery.adapter.ViewPagerAdapter
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
 import java.io.File
 import java.text.SimpleDateFormat
@@ -35,7 +46,7 @@ class PhotoView : AppCompatActivity() {
     private lateinit var btnDelete: ImageButton
     private lateinit var btnShare: ImageButton
     private lateinit var btnMenu: ImageButton
-    private var position: Int = 0
+    var position: Int = 0
     private lateinit var windowInsetsController : WindowInsetsControllerCompat
 
 
@@ -78,10 +89,10 @@ class PhotoView : AppCompatActivity() {
         viewPager = findViewById(R.id.viewPager)
 
         viewPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener(){
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                setDateTime(position)
-
+            override fun onPageSelected(pos: Int) {
+                super.onPageSelected(pos)
+                setDateTime(pos)
+                position = pos
             }
         })
 
@@ -94,10 +105,64 @@ class PhotoView : AppCompatActivity() {
         bottomContainer.visibility = View.GONE
         windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
         container.setBackgroundColor(Color.BLACK)
+
+        btnDelete.setOnClickListener {
+            showMenu(it, R.menu.menu_delete)
+        }
     }
     override fun onSupportNavigateUp(): Boolean {
         onBackPressedDispatcher.onBackPressed()
         return true
+    }
+
+    @SuppressLint("RestrictedApi")
+    private fun showMenu(v: View, @MenuRes menuRes: Int) {
+        val popup = PopupMenu(this, v)
+        popup.menuInflater.inflate(menuRes, popup.menu)
+
+        if (popup.menu is MenuBuilder) {
+            val menuBuilder = popup.menu as MenuBuilder
+            menuBuilder.setOptionalIconsVisible(true)
+            for (item in menuBuilder.visibleItems) {
+                val iconMarginPx =
+                    TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP, 5f, resources.displayMetrics
+                    )
+                        .toInt()
+                if (item.icon != null) {
+                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+                        item.icon = InsetDrawable(item.icon, iconMarginPx, 0, iconMarginPx, 0)
+                    } else {
+                        item.icon =
+                            object : InsetDrawable(item.icon, iconMarginPx, 0, iconMarginPx, 0) {
+                                override fun getIntrinsicWidth(): Int {
+                                    return intrinsicHeight + iconMarginPx + iconMarginPx
+                                }
+                            }
+                    }
+                }
+            }
+
+            popup.setOnMenuItemClickListener { menuItem: MenuItem ->
+                // Respond to menu item click.
+                when (menuItem.itemId) {
+                    R.id.menu_delete -> {
+                        val file = File(media!![position].path)
+                        file.delete()
+                        media = ArrayList(media!!).apply { removeAt(position) }
+                        viewPagerAdapter.updateData(media!!)
+                        viewPager.adapter = viewPagerAdapter
+                        viewPager.invalidate()
+                        setDateTime(position)
+                        viewPager.currentItem = position
+                    }
+                }
+                true
+            }
+            popup.setOnDismissListener {
+            }
+            popup.show()
+        }
     }
 
     private fun setDateTime(position : Int) {
