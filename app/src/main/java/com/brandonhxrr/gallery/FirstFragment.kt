@@ -1,6 +1,7 @@
 package com.brandonhxrr.gallery
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.brandonhxrr.gallery.adapter.PhotoAdapter
 import com.brandonhxrr.gallery.databinding.FragmentFirstBinding
 import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestBuilder
 
 class FirstFragment : Fragment() {
 
@@ -23,9 +25,10 @@ class FirstFragment : Fragment() {
     private var totalItemCount = 0
     private var loading = true
 
-    private var myAdapter: PhotoAdapter? = null
-    private var recyclerView: RecyclerView? = null
-    private var media: List<Photo>? = null
+    private lateinit var builder: RequestBuilder<Bitmap>
+    private lateinit var myAdapter: PhotoAdapter
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var media: List<Photo>
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -45,22 +48,22 @@ class FirstFragment : Fragment() {
         recyclerView = binding.gridRecyclerView
 
         val glide = Glide.with(this)
-        val builder = glide.asBitmap()
+        builder = glide.asBitmap()
 
         media = getAllImagesAndVideosSortedByRecent(context)
 
-        myAdapter = PhotoAdapter(media!!, builder, R.layout.photo)
+        myAdapter = PhotoAdapter(media, builder, R.layout.photo)
 
-        recyclerView!!.itemAnimator = DefaultItemAnimator()
-        recyclerView!!.isNestedScrollingEnabled = false
-        recyclerView!!.layoutManager = GridLayoutManager(context, 4)
-        recyclerView!!.adapter = myAdapter
+        recyclerView.itemAnimator = DefaultItemAnimator()
+        recyclerView.isNestedScrollingEnabled = false
+        recyclerView.layoutManager = GridLayoutManager(context, 4)
+        recyclerView.adapter = myAdapter
 
         setUpPagination()
     }
 
     private fun setUpPagination() {
-        recyclerView!!.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -73,7 +76,7 @@ class FirstFragment : Fragment() {
                     if(loading) {
                         if(visibleItemCount + pastVisibleItems >= totalItemCount) {
                             loading = false
-                            myAdapter!!.addMoreData()
+                            myAdapter.addMoreData()
                             loading = true
                         }
                     }
@@ -85,6 +88,15 @@ class FirstFragment : Fragment() {
                 onScrolled(recyclerView, recyclerView.scrollX, recyclerView.scrollY)
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        media = getAllImagesAndVideosSortedByRecent(requireContext())
+
+        myAdapter = PhotoAdapter(media, builder, R.layout.photo)
+        recyclerView.invalidate()
+        recyclerView.adapter = myAdapter
     }
 
 }

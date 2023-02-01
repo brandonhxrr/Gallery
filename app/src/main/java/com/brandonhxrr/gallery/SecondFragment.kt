@@ -1,18 +1,19 @@
 package com.brandonhxrr.gallery
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.brandonhxrr.gallery.adapter.AlbumAdapter
 import com.brandonhxrr.gallery.databinding.FragmentSecondBinding
 import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestBuilder
 import java.io.File
 
 class SecondFragment : Fragment() {
@@ -21,6 +22,9 @@ class SecondFragment : Fragment() {
     private val binding
         get() = _binding!!
     private lateinit var albums: HashMap<File, List<File>>
+    private lateinit var albumAdapter: AlbumAdapter
+    private lateinit var builder: RequestBuilder<Bitmap>
+    private lateinit var recyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,16 +47,16 @@ class SecondFragment : Fragment() {
     }
 
     private fun initRecyclerView(context: Context) {
-        val recyclerView = binding.gridRecyclerView
+        recyclerView = binding.gridRecyclerView
         recyclerView.layoutManager = GridLayoutManager(context, 2)
 
         val glide = Glide.with(this)
-        val builder = glide.asBitmap()
+        builder = glide.asBitmap()
 
-        val fol = AlbumAdapter(builder)
-        fol.setItems(albums)
+        albumAdapter = AlbumAdapter(builder)
+        albumAdapter.setItems(albums)
 
-        recyclerView.adapter = fol
+        recyclerView.adapter = albumAdapter
 
         recyclerView.addOnScrollListener(
             object : RecyclerView.OnScrollListener() {
@@ -68,5 +72,4 @@ class SecondFragment : Fragment() {
             }
         )
     }
-
 }

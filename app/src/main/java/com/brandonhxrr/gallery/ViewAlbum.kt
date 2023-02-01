@@ -1,6 +1,7 @@
 package com.brandonhxrr.gallery
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.brandonhxrr.gallery.adapter.PhotoAdapter
 import com.brandonhxrr.gallery.databinding.FragmentFirstBinding
 import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestBuilder
 import com.google.android.material.textview.MaterialTextView
 import com.google.gson.Gson
 
@@ -29,9 +31,10 @@ class ViewAlbum : Fragment() {
     private var totalItemCount = 0
     private var loading = true
 
-    private var myAdapter: PhotoAdapter? = null
-    private var recyclerView: RecyclerView? = null
-    private var media: List<Photo>? = null
+    private lateinit var builder: RequestBuilder<Bitmap>
+    private lateinit var myAdapter: PhotoAdapter
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var media: List<Photo>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,22 +80,22 @@ class ViewAlbum : Fragment() {
         recyclerView = binding.gridRecyclerView
 
         val glide = Glide.with(this)
-        val builder = glide.asBitmap()
+        builder = glide.asBitmap()
 
         media = getImagesFromAlbum(album.path)
 
-        myAdapter = PhotoAdapter(media!!, builder, R.layout.photo3)
+        myAdapter = PhotoAdapter(media, builder, R.layout.photo3)
 
-        recyclerView!!.itemAnimator = DefaultItemAnimator()
-        recyclerView!!.isNestedScrollingEnabled = false
-        recyclerView!!.layoutManager = GridLayoutManager(context, 3)
-        recyclerView!!.adapter = myAdapter
+        recyclerView.itemAnimator = DefaultItemAnimator()
+        recyclerView.isNestedScrollingEnabled = false
+        recyclerView.layoutManager = GridLayoutManager(context, 3)
+        recyclerView.adapter = myAdapter
 
         setUpPagination()
     }
 
     private fun setUpPagination() {
-        recyclerView!!.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -105,7 +108,7 @@ class ViewAlbum : Fragment() {
                     if(loading) {
                         if(visibleItemCount + pastVisibleItems >= totalItemCount) {
                             loading = false
-                            myAdapter!!.addMoreData()
+                            myAdapter.addMoreData()
                             loading = true
                         }
                    }
@@ -117,5 +120,14 @@ class ViewAlbum : Fragment() {
                 onScrolled(recyclerView, recyclerView.scrollX, recyclerView.scrollY)
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        media = getImagesFromAlbum(album.path)
+
+        myAdapter = PhotoAdapter(media, builder, R.layout.photo3)
+        recyclerView.invalidate()
+        recyclerView.adapter = myAdapter
     }
 }
