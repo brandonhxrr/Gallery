@@ -12,13 +12,18 @@ import androidx.viewpager.widget.ViewPager
 import com.brandonhxrr.gallery.adapter.ViewPagerAdapter
 import com.google.gson.Gson
 import java.io.File
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 class PhotoView : AppCompatActivity() {
 
     private var media: List<Photo>? = null
     private lateinit var viewPager: CustomViewPager
     private lateinit var viewPagerAdapter: ViewPagerAdapter
-    private lateinit var fileTitle: TextView
+    private lateinit var photoDate: TextView
+    private lateinit var photoTime: TextView
     private lateinit var container: ConstraintLayout
     private lateinit var toolbar: Toolbar
     private var position: Int = 0
@@ -34,7 +39,8 @@ class PhotoView : AppCompatActivity() {
 
         setContentView(R.layout.activity_photo_view)
 
-        fileTitle = findViewById(R.id.fileTitle)
+        photoDate = findViewById(R.id.photo_date)
+        photoTime = findViewById(R.id.photo_time)
         container = findViewById(R.id.constraintContainer)
 
         toolbar = findViewById(R.id.toolbar)
@@ -60,18 +66,32 @@ class PhotoView : AppCompatActivity() {
         viewPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener(){
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                fileTitle.text = File(media!![position].path).name
+                setDateTime(position)
+
             }
         })
 
         viewPagerAdapter = ViewPagerAdapter(this, media!!)
         viewPager.adapter = viewPagerAdapter
-        fileTitle.text = File(media!![position].path).name
+        setDateTime(position)
         viewPager.currentItem = position
     }
     override fun onSupportNavigateUp(): Boolean {
         onBackPressedDispatcher.onBackPressed()
         return true
+    }
+
+    private fun setDateTime(position : Int) {
+        val date = Date(File(media!![position].path).lastModified())
+        val inputFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy", Locale.getDefault())
+        val outputFormatDate = SimpleDateFormat("dd 'de' MMMM 'de' yyyy", Locale.getDefault())
+        val outputFormatTime = SimpleDateFormat("hh:mm a", Locale.getDefault())
+
+        val input = inputFormat.format(date)
+        val dateParse = inputFormat.parse(input)
+
+        photoDate.text = outputFormatDate.format(dateParse!!)
+        photoTime.text = outputFormatTime.format(dateParse)
     }
 
     private fun getStatusBarHeight(): Int {
