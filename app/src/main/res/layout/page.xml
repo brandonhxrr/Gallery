@@ -18,32 +18,5 @@
         android:visibility="invisible"
         android:layout_centerInParent="true"
         android:layout_gravity="center"/>
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal">
-        <ImageButton
-            android:id="@+id/btn_delete"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.3"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_delete"/>
-        <ImageButton
-            android:id="@+id/btn_share"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.3"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_share"/>
-        <ImageButton
-            android:id="@+id/btn_menu"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.3"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_menu"/>
-    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </RelativeLayout>
