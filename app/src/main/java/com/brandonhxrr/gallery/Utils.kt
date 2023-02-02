@@ -15,6 +15,8 @@ val imageExtensions = arrayOf("jpg", "jpeg", "png", "gif", "bmp")
 val videoExtensions = arrayOf("mp4", "mkv", "avi", "wmv", "mov")
 val fileExtensions = listOf("jpg", "jpeg", "png", "gif", "mp4", "mkv")
 
+var albumes: HashMap<File, List<File>>? = null
+
 fun sortImagesByFolder(files: List<File>): Map<File, List<File>> {
     val resultMap = mutableMapOf<File, MutableList<File>>()
     for (file in files) {

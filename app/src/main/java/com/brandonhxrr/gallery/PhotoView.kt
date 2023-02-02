@@ -1,6 +1,7 @@
 package com.brandonhxrr.gallery
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -14,6 +15,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MenuRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.menu.MenuBuilder
@@ -217,7 +220,9 @@ class PhotoView : AppCompatActivity() {
 
                 }
                 R.id.menu_move -> {
-
+                    val selectionIntent = Intent(this, AlbumSelection::class.java)
+                    resultLauncher.launch(selectionIntent)
+                    //do something
                 }
                 R.id.menu_copy -> {
 
@@ -227,6 +232,15 @@ class PhotoView : AppCompatActivity() {
         }
         popup.setOnDismissListener {}
         popup.show()
+    }
+
+    var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            // There are no request codes
+            val data: Intent? = result.data
+            val ruta: String = data?.getStringExtra("RUTA")!!
+            Toast.makeText(this, ruta, Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun getResolution(path: String): String {

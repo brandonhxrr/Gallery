@@ -57,19 +57,5 @@ class SecondFragment : Fragment() {
         albumAdapter.setItems(albums)
 
         recyclerView.adapter = albumAdapter
-
-        recyclerView.addOnScrollListener(
-            object : RecyclerView.OnScrollListener() {
-
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    super.onScrollStateChanged(recyclerView, newState)
-                    when (newState) {
-                        RecyclerView.SCROLL_STATE_IDLE -> glide.resumeRequests()
-                        AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL,
-                        AbsListView.OnScrollListener.SCROLL_STATE_FLING -> glide.pauseRequests()
-                    }
-                }
-            }
-        )
     }
 }

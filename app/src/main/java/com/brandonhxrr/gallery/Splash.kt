@@ -23,6 +23,7 @@ open class Splash : AppCompatActivity() {
 
         val folders: HashMap<File, List<File>> = sortImagesByFolder(getAllImages(this)) as HashMap<File, List<File>>
 
+        albumes = folders
         //val folders: List<File> = getAlbums(this)
 
         val intent = Intent(this, MainActivity::class.java)
