@@ -69,16 +69,16 @@ class ViewPagerAdapter(
             if(file.extension in videoExtensions){
                 playButton.visibility = View.VISIBLE
 
-                imageView.setOnClickListener {
+                playButton.setOnClickListener {
                     val videoUri: Uri = Uri.parse(file.path)
                     val intent = Intent(Intent.ACTION_VIEW,videoUri)
                     intent.setDataAndType(videoUri, "video/*")
                     context.startActivity(intent)
                 }
-            }else {
-                imageView.setOnClickListener {
-                    hideStatusBar()
-                }
+            }
+
+            imageView.setOnClickListener {
+                hideStatusBar()
             }
 
             Glide.with(context)

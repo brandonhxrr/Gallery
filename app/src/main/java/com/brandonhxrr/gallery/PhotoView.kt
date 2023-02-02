@@ -213,7 +213,7 @@ class PhotoView : AppCompatActivity() {
                     }
 
                     MaterialAlertDialogBuilder(this)
-                        .setTitle((position + 1).toString() + "/" + media!!.size.toString())
+                        //.setTitle((position + 1).toString() + "/" + media!!.size.toString())
                         .setMessage("Ruta: " + file.absolutePath
                                 + "\nTipo: " + file.extension
                                 + "\nTamaño: " + fileSizeString
