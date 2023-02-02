@@ -16,4 +16,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:navGraph="@navigation/nav_graph" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/album_empty"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/product_sans_regular"
+        android:textColor="@color/md_theme_light_error"
+        android:textAlignment="center"
+        android:layout_marginHorizontal="24dp"
+        android:textSize="18sp"
+        android:text="¡No hay imágenes en el álbum!"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

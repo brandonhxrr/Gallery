@@ -168,11 +168,17 @@ class PhotoView : AppCompatActivity() {
                         val file = File(media!![position].path)
                         file.delete()
                         media = ArrayList(media!!).apply { removeAt(position) }
-                        viewPagerAdapter.updateData(media!!)
-                        viewPager.adapter = viewPagerAdapter
-                        viewPager.invalidate()
-                        setDateTime(position)
-                        viewPager.currentItem = position
+
+                        if((media as ArrayList<Photo>).isNotEmpty()){
+                            viewPagerAdapter.updateData(media!!)
+                            viewPager.adapter = viewPagerAdapter
+                            viewPager.invalidate()
+                            setDateTime(position)
+                            viewPager.currentItem = position
+                        }else {
+                            this.onBackPressed()
+                        }
+
                     }
                 }
                 true

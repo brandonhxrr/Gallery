@@ -7,13 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.brandonhxrr.gallery.adapter.AlbumAdapter
+import com.brandonhxrr.gallery.adapter.PhotoAdapter
 import com.brandonhxrr.gallery.databinding.FragmentSecondBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
+import com.google.android.material.textview.MaterialTextView
 import java.io.File
 
 class SecondFragment : Fragment() {
@@ -28,7 +31,8 @@ class SecondFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        albums = arguments?.get("albums") as HashMap<File, List<File>>
+        //albums = arguments?.get("albums") as HashMap<File, List<File>>
+        albums = albumes!!
     }
 
     override fun onCreateView(
@@ -57,5 +61,20 @@ class SecondFragment : Fragment() {
         albumAdapter.setItems(albums)
 
         recyclerView.adapter = albumAdapter
+    }
+
+    override fun onResume() {
+        super.onResume()
+        albums = albumes!!
+
+        if(albums.isNotEmpty()){
+            albumAdapter = AlbumAdapter(builder)
+            albumAdapter.setItems(albums)
+            recyclerView.invalidate()
+            recyclerView.adapter = albumAdapter
+
+        }else {
+            activity?.onBackPressed()
+        }
     }
 }

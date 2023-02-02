@@ -1,8 +1,10 @@
 package com.brandonhxrr.gallery
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +21,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.google.android.material.textview.MaterialTextView
 import com.google.gson.Gson
+import java.io.File
 
 class ViewAlbum : Fragment() {
     private lateinit var album : Album
@@ -35,6 +38,7 @@ class ViewAlbum : Fragment() {
     private lateinit var myAdapter: PhotoAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var media: List<Photo>
+    private lateinit var txtAlbumEmpty: MaterialTextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +61,7 @@ class ViewAlbum : Fragment() {
         (activity as AppCompatActivity).findViewById<ImageView>(R.id.app_logo).visibility = View.GONE
 
         toolbar = (activity as AppCompatActivity).findViewById(R.id.toolbar)
+        txtAlbumEmpty = (activity as AppCompatActivity).findViewById(R.id.album_empty)
 
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
 
@@ -73,6 +78,7 @@ class ViewAlbum : Fragment() {
         (activity as AppCompatActivity).findViewById<ImageView>(R.id.app_logo).visibility = View.VISIBLE
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(false)
+        txtAlbumEmpty.visibility = View.GONE
         _binding = null
     }
 
@@ -90,7 +96,6 @@ class ViewAlbum : Fragment() {
         recyclerView.isNestedScrollingEnabled = false
         recyclerView.layoutManager = GridLayoutManager(context, 3)
         recyclerView.adapter = myAdapter
-
         setUpPagination()
     }
 
@@ -129,5 +134,15 @@ class ViewAlbum : Fragment() {
         myAdapter = PhotoAdapter(media, builder, R.layout.photo3)
         recyclerView.invalidate()
         recyclerView.adapter = myAdapter
+
+        if(media.isNotEmpty()){
+            (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).text =
+                "${album.name} (${album.itemsNumber})"
+        }else {
+            albumes?.remove(File(album.path))
+            (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).text =
+                "${album.name} (0)"
+            txtAlbumEmpty.visibility = View.VISIBLE
+        }
     }
 }
