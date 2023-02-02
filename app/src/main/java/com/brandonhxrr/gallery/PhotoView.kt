@@ -1,7 +1,9 @@
 package com.brandonhxrr.gallery
 
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.InsetDrawable
 import android.os.Build
@@ -118,6 +120,10 @@ class PhotoView : AppCompatActivity() {
             intent.putExtra(Intent.EXTRA_STREAM, uri)
             startActivity(Intent.createChooser(intent, "Share"))
         }
+
+        btnMenu.setOnClickListener {
+            showSubmenu(it, R.menu.menu_submenu)
+        }
     }
     override fun onSupportNavigateUp(): Boolean {
         onBackPressedDispatcher.onBackPressed()
@@ -172,6 +178,63 @@ class PhotoView : AppCompatActivity() {
             }
             popup.show()
         }
+    }
+    private fun showSubmenu(v: View, @MenuRes menuRes: Int) {
+        val popup = PopupMenu(this, v)
+        popup.menuInflater.inflate(menuRes, popup.menu)
+
+        popup.setOnMenuItemClickListener { menuItem: MenuItem ->
+            // Respond to menu item click.
+            when (menuItem.itemId) {
+                R.id.menu_details-> {
+                    val file = File(media!![position].path)
+                    val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm a", Locale.getDefault())
+                    val lastModified = file.lastModified()
+                    val fileSize = file.length()
+                    val fileSizeString: String
+
+                    if (fileSize >= 1024 * 1024 * 1024) {
+                        fileSizeString = String.format(Locale.getDefault(), "%.2f GB", fileSize.toFloat() / (1024 * 1024 * 1024))
+                    } else if (fileSize >= 1024 * 1024) {
+                        fileSizeString = String.format(Locale.getDefault(), "%.2f MB", fileSize.toFloat() / (1024 * 1024))
+                    } else if (fileSize >= 1024) {
+                        fileSizeString = String.format(Locale.getDefault(), "%.2f KB", fileSize.toFloat() / 1024)
+                    } else {
+                        fileSizeString = "$fileSize bytes"
+                    }
+
+                    MaterialAlertDialogBuilder(this)
+                        .setTitle((position + 1).toString() + "/" + media!!.size.toString())
+                        .setMessage("Ruta: " + file.absolutePath
+                                + "\nTipo: " + file.extension
+                                + "\nTamaño: " + fileSizeString
+                                + "\nResolución: " + getResolution(file.path)
+                                + "\nFecha: " + dateFormat.format(Date(lastModified)))
+                        .setPositiveButton("Aceptar", DialogInterface.OnClickListener { dialog, _ ->
+                            dialog.dismiss()
+                        })
+                        .show()
+
+                }
+                R.id.menu_move -> {
+
+                }
+                R.id.menu_copy -> {
+
+                }
+            }
+            true
+        }
+        popup.setOnDismissListener {}
+        popup.show()
+    }
+
+    private fun getResolution(path: String): String {
+        val options = BitmapFactory.Options().apply {
+            inJustDecodeBounds = true
+        }
+        BitmapFactory.decodeFile(path, options)
+        return options.outWidth.toString() + "x" + options.outHeight.toString()
     }
 
     private fun setDateTime(position : Int) {
