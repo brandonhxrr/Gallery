@@ -14,6 +14,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -28,9 +29,13 @@ import androidx.core.content.FileProvider
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.marginStart
 import androidx.viewpager.widget.ViewPager
 import com.brandonhxrr.gallery.adapter.ViewPagerAdapter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.dialog.MaterialDialogs
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.gson.Gson
 import java.io.File
 import java.text.SimpleDateFormat
@@ -234,6 +239,33 @@ class PhotoView : AppCompatActivity() {
                     val selectionIntent = Intent(this, AlbumSelection::class.java)
                     resultLauncher.launch(selectionIntent)
                     OPERATION = "COPY"
+                }
+                R.id.menu_rename -> {
+                    val file = File(media!![position].path)
+
+                    val view = layoutInflater.inflate(R.layout.alert_edit_text, null)
+                    val textInputLayout = view.findViewById<TextInputLayout>(R.id.text_input_layout)
+                    val textInputEditText = view.findViewById<TextInputEditText>(R.id.text_input_edit_text)
+
+                    textInputEditText.setText(file.nameWithoutExtension)
+
+                    MaterialAlertDialogBuilder(this)
+                        .setTitle("Renombrar")
+                        .setView(textInputLayout)
+                        .setPositiveButton("Renombrar") { _, _ ->
+                            var newName = textInputEditText.text.toString()
+                            newName += "." + file.extension
+                            val newFile = File(file.parent + "/" + newName)
+                            if (file.renameTo(newFile)) {
+                                Toast.makeText(this, "El archivo se ha renombrado correctamente", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this, "No se pudo renombrar el archivo", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        .setNegativeButton("Cancelar") { dialog, _ ->
+                            dialog.dismiss()
+                        }
+                        .show()
                 }
             }
             true
