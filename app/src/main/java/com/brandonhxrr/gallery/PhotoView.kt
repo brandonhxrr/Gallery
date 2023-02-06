@@ -53,7 +53,7 @@ class PhotoView : AppCompatActivity() {
     private lateinit var btnMenu: ImageButton
     var position: Int = 0
     private lateinit var windowInsetsController : WindowInsetsControllerCompat
-
+    private lateinit var OPERATION: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -228,10 +228,12 @@ class PhotoView : AppCompatActivity() {
                 R.id.menu_move -> {
                     val selectionIntent = Intent(this, AlbumSelection::class.java)
                     resultLauncher.launch(selectionIntent)
-                    //do something
+                    OPERATION = "MOVE"
                 }
                 R.id.menu_copy -> {
-
+                    val selectionIntent = Intent(this, AlbumSelection::class.java)
+                    resultLauncher.launch(selectionIntent)
+                    OPERATION = "COPY"
                 }
             }
             true
@@ -240,12 +242,20 @@ class PhotoView : AppCompatActivity() {
         popup.show()
     }
 
-    var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            // There are no request codes
             val data: Intent? = result.data
             val ruta: String = data?.getStringExtra("RUTA")!!
             Toast.makeText(this, ruta, Toast.LENGTH_SHORT).show()
+
+            when(OPERATION) {
+                "MOVE" -> {
+
+                }
+                "COPY" -> {
+
+                }
+            }
         }
     }
 
