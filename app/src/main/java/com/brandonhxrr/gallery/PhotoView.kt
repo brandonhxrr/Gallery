@@ -9,19 +9,18 @@ import android.graphics.Color
 import android.graphics.drawable.InsetDrawable
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MenuRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.menu.MenuBuilder
-import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -29,18 +28,14 @@ import androidx.core.content.FileProvider
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.core.view.marginStart
 import androidx.viewpager.widget.ViewPager
 import com.brandonhxrr.gallery.adapter.ViewPagerAdapter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.dialog.MaterialDialogs
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.gson.Gson
 import java.io.File
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 class PhotoView : AppCompatActivity() {
@@ -58,7 +53,8 @@ class PhotoView : AppCompatActivity() {
     private lateinit var btnMenu: ImageButton
     var position: Int = 0
     private lateinit var windowInsetsController : WindowInsetsControllerCompat
-    private lateinit var OPERATION: String
+    private lateinit var operation: String
+    private lateinit var currentFile: File
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,12 +93,14 @@ class PhotoView : AppCompatActivity() {
         media = gson.fromJson(data, Array<Photo>::class.java).toList()
 
         viewPager = findViewById(R.id.viewPager)
+        currentFile = File(media!![position].path)
 
         viewPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener(){
             override fun onPageSelected(pos: Int) {
                 super.onPageSelected(pos)
                 setDateTime(pos)
                 position = pos
+                currentFile = File(media!![position].path)
             }
         })
 
@@ -122,9 +120,8 @@ class PhotoView : AppCompatActivity() {
 
         btnShare.setOnClickListener {
             val intent = Intent(Intent.ACTION_SEND)
-            val file = File(media!![position].path)
-            intent.type = if (imageExtensions.contains(file.extension)) "image/*" else "video/*"
-            val uri = FileProvider.getUriForFile(this, "${this.packageName}.provider", file)
+            intent.type = if (imageExtensions.contains(currentFile.extension)) "image/*" else "video/*"
+            val uri = FileProvider.getUriForFile(this, "${this.packageName}.provider", currentFile)
             intent.putExtra(Intent.EXTRA_STREAM, uri)
             startActivity(Intent.createChooser(intent, "Share"))
         }
@@ -170,8 +167,7 @@ class PhotoView : AppCompatActivity() {
                 // Respond to menu item click.
                 when (menuItem.itemId) {
                     R.id.menu_delete -> {
-                        val file = File(media!![position].path)
-                        file.delete()
+                        currentFile.delete()
                         media = ArrayList(media!!).apply { removeAt(position) }
 
                         if((media as ArrayList<Photo>).isNotEmpty()){
@@ -180,6 +176,7 @@ class PhotoView : AppCompatActivity() {
                             viewPager.invalidate()
                             setDateTime(position)
                             viewPager.currentItem = position
+                            currentFile = File(media!![position].path)
                         }else {
                             this.onBackPressed()
                         }
@@ -201,10 +198,9 @@ class PhotoView : AppCompatActivity() {
             // Respond to menu item click.
             when (menuItem.itemId) {
                 R.id.menu_details-> {
-                    val file = File(media!![position].path)
                     val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm a", Locale.getDefault())
-                    val lastModified = file.lastModified()
-                    val fileSize = file.length()
+                    val lastModified = currentFile.lastModified()
+                    val fileSize = currentFile.length()
                     val fileSizeString: String
 
                     if (fileSize >= 1024 * 1024 * 1024) {
@@ -219,10 +215,10 @@ class PhotoView : AppCompatActivity() {
 
                     MaterialAlertDialogBuilder(this)
                         //.setTitle((position + 1).toString() + "/" + media!!.size.toString())
-                        .setMessage("Ruta: " + file.absolutePath
-                                + "\nTipo: " + file.extension
+                        .setMessage("Ruta: " + currentFile.absolutePath
+                                + "\nTipo: " + currentFile.extension
                                 + "\nTamaño: " + fileSizeString
-                                + "\nResolución: " + getResolution(file.path)
+                                + "\nResolución: " + getResolution(currentFile.path)
                                 + "\nFecha: " + dateFormat.format(Date(lastModified)))
                         .setPositiveButton("Aceptar", DialogInterface.OnClickListener { dialog, _ ->
                             dialog.dismiss()
@@ -233,30 +229,30 @@ class PhotoView : AppCompatActivity() {
                 R.id.menu_move -> {
                     val selectionIntent = Intent(this, AlbumSelection::class.java)
                     resultLauncher.launch(selectionIntent)
-                    OPERATION = "MOVE"
+                    operation = "MOVE"
                 }
                 R.id.menu_copy -> {
                     val selectionIntent = Intent(this, AlbumSelection::class.java)
                     resultLauncher.launch(selectionIntent)
-                    OPERATION = "COPY"
+                    operation = "COPY"
                 }
                 R.id.menu_rename -> {
-                    val file = File(media!![position].path)
 
                     val view = layoutInflater.inflate(R.layout.alert_edit_text, null)
                     val textInputLayout = view.findViewById<TextInputLayout>(R.id.text_input_layout)
                     val textInputEditText = view.findViewById<TextInputEditText>(R.id.text_input_edit_text)
 
-                    textInputEditText.setText(file.nameWithoutExtension)
+                    textInputEditText.setText(currentFile.nameWithoutExtension)
 
                     MaterialAlertDialogBuilder(this)
                         .setTitle("Renombrar")
                         .setView(textInputLayout)
                         .setPositiveButton("Renombrar") { _, _ ->
                             var newName = textInputEditText.text.toString()
-                            newName += "." + file.extension
-                            val newFile = File(file.parent + "/" + newName)
-                            if (file.renameTo(newFile)) {
+                            newName += "." + currentFile.extension
+                            val newFile = File(currentFile.parent + "/" + newName)
+                            if (currentFile.renameTo(newFile)) {
+                                currentFile = File(media!![position].path)
                                 Toast.makeText(this, "El archivo se ha renombrado correctamente", Toast.LENGTH_SHORT).show()
                             } else {
                                 Toast.makeText(this, "No se pudo renombrar el archivo", Toast.LENGTH_SHORT).show()
@@ -280,7 +276,7 @@ class PhotoView : AppCompatActivity() {
             val ruta: String = data?.getStringExtra("RUTA")!!
             Toast.makeText(this, ruta, Toast.LENGTH_SHORT).show()
 
-            when(OPERATION) {
+            when(operation) {
                 "MOVE" -> {
 
                 }
@@ -300,7 +296,7 @@ class PhotoView : AppCompatActivity() {
     }
 
     private fun setDateTime(position : Int) {
-        val date = Date(File(media!![position].path).lastModified())
+        val date = Date(currentFile.lastModified())
         val inputFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy", Locale.getDefault())
         val outputFormatDate = SimpleDateFormat("dd 'de' MMMM 'de' yyyy", Locale.getDefault())
         val outputFormatTime = SimpleDateFormat("hh:mm a", Locale.getDefault())
