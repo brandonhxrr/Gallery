@@ -1,4 +1,3 @@
-
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Base.Theme.Gallery" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/md_theme_light_primary</item>
@@ -39,7 +38,9 @@
 
     <style name="AppTheme.PreviewWallpaper" parent="Base.Theme.Gallery">
         <item name="android:immersive">true</item>
-        <item name="android:statusBarColor">@color/white_transparent</item>
-        <item name="android:navigationBarColor">@color/white_transparent</item>
+        <item name="android:statusBarColor">@color/md_theme_light_surface</item>
+        <item name="android:navigationBarColor">@color/md_theme_light_surface</item>
     </style>
+
+    <attr name="colorSurface" format="reference" />
 </resources>

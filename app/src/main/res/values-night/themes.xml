@@ -32,4 +32,10 @@
     <style name="TextViewStyle" parent="Widget.MaterialComponents.TextView">
         <item name="android:textColor">@color/md_theme_dark_onSurface</item>
     </style>
+
+    <style name="AppTheme.PreviewWallpaper" parent="Base.Theme.Gallery">
+        <item name="android:immersive">true</item>
+        <item name="android:statusBarColor">@color/md_theme_dark_surface</item>
+        <item name="android:navigationBarColor">@color/md_theme_dark_surface</item>
+    </style>
 </resources>

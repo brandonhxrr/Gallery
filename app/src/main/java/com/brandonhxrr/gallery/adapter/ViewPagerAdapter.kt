@@ -6,12 +6,14 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.WindowCompat
@@ -21,12 +23,13 @@ import androidx.transition.Slide
 import androidx.transition.Transition
 import androidx.transition.TransitionManager
 import androidx.viewpager.widget.PagerAdapter
+import com.brandonhxrr.gallery.CustomViewPager
 import com.brandonhxrr.gallery.Photo
 import com.brandonhxrr.gallery.R
-import com.brandonhxrr.gallery.CustomViewPager
 import com.bumptech.glide.Glide
 import com.github.chrisbanes.photoview.PhotoView
 import java.io.File
+
 
 class ViewPagerAdapter(
     val context: Context,
@@ -103,12 +106,17 @@ class ViewPagerAdapter(
         TransitionManager.beginDelayedTransition(toolbar, transition)
         TransitionManager.beginDelayedTransition(bottomContainer, transitionBottomContainer)
 
+        val typedValue = TypedValue()
+        val theme = context.theme
+        theme.resolveAttribute(R.attr.colorSurface, typedValue, true)
+        @ColorInt val color = typedValue.data
+
         if(hidden){
             toolbar.visibility = View.GONE
             bottomContainer.visibility = View.GONE
             windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
 
-            val anim = ObjectAnimator.ofArgb(constraintContainer, "backgroundColor", Color.WHITE, Color.BLACK)
+            val anim = ObjectAnimator.ofArgb(constraintContainer, "backgroundColor", color, Color.BLACK)
             anim.duration = 200
             anim.start()
         }else {
@@ -116,7 +124,7 @@ class ViewPagerAdapter(
             bottomContainer.visibility = View.VISIBLE
             windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
 
-            val anim = ObjectAnimator.ofArgb(constraintContainer, "backgroundColor", Color.BLACK, Color.WHITE)
+            val anim = ObjectAnimator.ofArgb(constraintContainer, "backgroundColor", Color.BLACK, color)
             anim.duration = 200
             anim.start()
         }
@@ -132,5 +140,15 @@ class ViewPagerAdapter(
     fun updateData(media: List<Photo>) {
         imageList = media
         this.notifyDataSetChanged()
+    }
+
+    @ColorInt
+    fun Context.getColorFromAttr(
+        @AttrRes attrColor: Int,
+        typedValue: TypedValue = TypedValue(),
+        resolveRefs: Boolean = true
+    ): Int {
+        theme.resolveAttribute(attrColor, typedValue, resolveRefs)
+        return typedValue.data
     }
 }
