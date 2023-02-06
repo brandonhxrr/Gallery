@@ -1,4 +1,3 @@
-
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Base.Theme.Gallery" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/md_theme_light_primary</item>
@@ -42,4 +41,6 @@
         <item name="android:statusBarColor">@color/white_transparent</item>
         <item name="android:navigationBarColor">@color/white_transparent</item>
     </style>
+
+    <attr name="colorSurface" format="reference" />
 </resources>
