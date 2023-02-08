@@ -5,15 +5,11 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
 import android.provider.MediaStore.MediaColumns
-import com.bumptech.glide.load.data.mediastore.MediaStoreUtil
-import com.bumptech.glide.load.model.MediaStoreFileLoader
-import com.bumptech.glide.load.model.stream.MediaStoreImageThumbLoader
-import com.bumptech.glide.signature.MediaStoreSignature
 import java.io.File
 
-val imageExtensions = arrayOf("jpg", "jpeg", "png", "gif", "bmp")
+val imageExtensions = arrayOf("jpg", "jpeg", "png", "gif", "bmp", "webp")
 val videoExtensions = arrayOf("mp4", "mkv", "avi", "wmv", "mov")
-val fileExtensions = listOf("jpg", "jpeg", "png", "gif", "mp4", "mkv")
+val fileExtensions = imageExtensions.plus(videoExtensions)
 
 var albumes: HashMap<File, List<File>>? = null
 
@@ -21,8 +17,8 @@ fun sortImagesByFolder(files: List<File>): Map<File, List<File>> {
     val resultMap = mutableMapOf<File, MutableList<File>>()
     for (file in files) {
         if(file.totalSpace != 0L){
-            (!resultMap.containsKey(file.parentFile)).let { resultMap.put(file.parentFile, mutableListOf()) }
-            resultMap[file.parentFile]?.add(file)
+            (!resultMap.containsKey(file.parentFile!!)).let { resultMap.put(file.parentFile!!, mutableListOf()) }
+            resultMap[file.parentFile!!]?.add(file)
         }
     }
     return resultMap
@@ -48,7 +44,6 @@ fun getAllImages(context: Context): List<File> {
 }
 
 fun getAllImagesAndVideosSortedByRecent(context: Context): List<Photo> {
-    val fileExtensions = listOf("jpg", "jpeg", "png", "gif", "mp4", "mkv")
     val sortOrder = MediaStore.Images.Media.DATE_TAKEN + " DESC"
     val sortOrderVideos = MediaStore.Video.Media.DATE_TAKEN + " DESC"
 
@@ -89,8 +84,6 @@ private fun Cursor.getResultsFromCursor(): List<File> {
     while (this.moveToNext()) {
         results.add(File(this.getString(this.getColumnIndexOrThrow(MediaColumns.DATA))))
     }
-
-
     return results
 }
 

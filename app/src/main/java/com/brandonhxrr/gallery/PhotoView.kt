@@ -7,6 +7,7 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.InsetDrawable
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -35,8 +36,11 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.gson.Gson
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class PhotoView : AppCompatActivity() {
 
@@ -55,6 +59,7 @@ class PhotoView : AppCompatActivity() {
     private lateinit var windowInsetsController : WindowInsetsControllerCompat
     private lateinit var operation: String
     private lateinit var currentFile: File
+    private val REQUEST_ID = 77
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -164,7 +169,6 @@ class PhotoView : AppCompatActivity() {
             }
 
             popup.setOnMenuItemClickListener { menuItem: MenuItem ->
-                // Respond to menu item click.
                 when (menuItem.itemId) {
                     R.id.menu_delete -> {
                         currentFile.delete()
@@ -195,22 +199,20 @@ class PhotoView : AppCompatActivity() {
         popup.menuInflater.inflate(menuRes, popup.menu)
 
         popup.setOnMenuItemClickListener { menuItem: MenuItem ->
-            // Respond to menu item click.
             when (menuItem.itemId) {
                 R.id.menu_details-> {
                     val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm a", Locale.getDefault())
                     val lastModified = currentFile.lastModified()
                     val fileSize = currentFile.length()
-                    val fileSizeString: String
 
-                    if (fileSize >= 1024 * 1024 * 1024) {
-                        fileSizeString = String.format(Locale.getDefault(), "%.2f GB", fileSize.toFloat() / (1024 * 1024 * 1024))
+                    val fileSizeString: String = if (fileSize >= 1024 * 1024 * 1024) {
+                        String.format(Locale.getDefault(), "%.2f GB", fileSize.toFloat() / (1024 * 1024 * 1024))
                     } else if (fileSize >= 1024 * 1024) {
-                        fileSizeString = String.format(Locale.getDefault(), "%.2f MB", fileSize.toFloat() / (1024 * 1024))
+                        String.format(Locale.getDefault(), "%.2f MB", fileSize.toFloat() / (1024 * 1024))
                     } else if (fileSize >= 1024) {
-                        fileSizeString = String.format(Locale.getDefault(), "%.2f KB", fileSize.toFloat() / 1024)
+                        String.format(Locale.getDefault(), "%.2f KB", fileSize.toFloat() / 1024)
                     } else {
-                        fileSizeString = "$fileSize bytes"
+                        "$fileSize bytes"
                     }
 
                     MaterialAlertDialogBuilder(this)
@@ -250,7 +252,7 @@ class PhotoView : AppCompatActivity() {
                         .setPositiveButton("Renombrar") { _, _ ->
                             var newName = textInputEditText.text.toString()
                             newName += "." + currentFile.extension
-                            val newFile = File(currentFile.parent + "/" + newName)
+                            val newFile = File(currentFile.parent!! + "/" + newName)
                             if (currentFile.renameTo(newFile)) {
                                 currentFile = File(media!![position].path)
                                 Toast.makeText(this, "El archivo se ha renombrado correctamente", Toast.LENGTH_SHORT).show()
@@ -274,14 +276,17 @@ class PhotoView : AppCompatActivity() {
         if (result.resultCode == Activity.RESULT_OK) {
             val data: Intent? = result.data
             val ruta: String = data?.getStringExtra("RUTA")!!
-            Toast.makeText(this, ruta, Toast.LENGTH_SHORT).show()
+
+            val dest = File(ruta)
+            val uri = Uri.fromFile(dest)
+            Log.d("COPY100: URI", uri.toString())
 
             when(operation) {
                 "MOVE" -> {
-
+                    copyFilesToSD(ruta, currentFile, true)
                 }
                 "COPY" -> {
-
+                    copyFilesToSD(ruta, currentFile, false)
                 }
             }
         }
@@ -294,6 +299,30 @@ class PhotoView : AppCompatActivity() {
         BitmapFactory.decodeFile(path, options)
         return options.outWidth.toString() + "x" + options.outHeight.toString()
     }
+
+    /*fun copyFileToMediaStore(destinationUri: Uri, file: File) {
+        Log.d("COPY100: MOUNTED", Environment.getExternalStorageState())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            Log.d("COPY100: lEGACY", Environment.isExternalStorageLegacy().toString())
+        }
+        val resolver = contentResolver
+        val values = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, file.name)
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+            put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/")
+        }
+        val collection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+        val uri = resolver.insert(collection, values)
+        Log.d("COPY 100: MEDIAURI", uri.toString())
+        val inputStream = FileInputStream(file)
+        val outputStream = resolver.openOutputStream(uri!!)
+        inputStream.use { input ->
+            outputStream?.use { output ->
+                input.copyTo(output)
+            }
+        }
+    }*/
+
 
     private fun setDateTime(position : Int) {
         val date = Date(currentFile.lastModified())
@@ -313,5 +342,28 @@ class PhotoView : AppCompatActivity() {
         return if (resourceId != 0) {
             resources.getDimensionPixelSize(resourceId)
         } else 0
+    }
+
+    private fun copyFilesToSD(ruta: String, file: File, moveFile: Boolean){
+        val filePath = "$ruta/${file.name}"
+
+        val newFile = File(filePath)
+        try {
+            val inputStream = FileInputStream(file)
+            val outputStream = FileOutputStream(newFile)
+            inputStream.copyTo(outputStream)
+            inputStream.close()
+            outputStream.close()
+            if(moveFile) {
+                file.delete()
+                Toast.makeText(this, "File moved successfully", Toast.LENGTH_SHORT).show()
+            }else {
+                Toast.makeText(this, "File copied successfully", Toast.LENGTH_SHORT).show()
+            }
+
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error copying file", Toast.LENGTH_SHORT).show()
+            Log.e("Error", "Error copying file", e)
+        }
     }
 }
