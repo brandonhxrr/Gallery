@@ -35,7 +35,6 @@ class SecondFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //albums = arguments?.get("albums") as HashMap<File, List<File>>
         albums = albumes!!
     }
 

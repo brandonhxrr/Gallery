@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
 
-        val albums = intent.extras?.get("albums")
+        val albums = albumes
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -37,22 +37,19 @@ class MainActivity : AppCompatActivity() {
 
         bottomNavView = findViewById(R.id.bottomNavigationView)
 
-        logs()
-
-        bottomNavView.setItemOnTouchListener(R.id.menu_photos, View.OnTouchListener { v, event ->
-            if (navController.currentDestination?.id == R.id.SecondFragment){
+        bottomNavView.setItemOnTouchListener(R.id.menu_photos) { v, _ ->
+            if (navController.currentDestination?.id == R.id.SecondFragment) {
                 navController.popBackStack()
-            } else if(navController.currentDestination?.id == R.id.ViewAlbumFragment) {
+            } else if (navController.currentDestination?.id == R.id.ViewAlbumFragment) {
                 navController.popBackStack(R.id.FirstFragment, false)
             }
             v.performClick()
             true
-        })
+        }
 
-        bottomNavView.setItemOnTouchListener(R.id.menu_album) { v, event ->
+        bottomNavView.setItemOnTouchListener(R.id.menu_album) { v, _ ->
             if (navController.currentDestination?.id == R.id.FirstFragment) {
-                val bundle = bundleOf("albums" to albums)
-                navController.navigate(R.id.action_FirstFragment_to_SecondFragment, bundle)
+                navController.navigate(R.id.action_FirstFragment_to_SecondFragment)
             } else if (navController.currentDestination?.id == R.id.ViewAlbumFragment) {
                 navController.popBackStack()
             }
@@ -81,43 +78,7 @@ class MainActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setDisplayShowHomeEnabled(false)
-        //bottomNavView.selectedItemId = navController.currentDestination!!.id
 
         return navUp
-    }
-
-    private fun logs(){
-        Log.d("COPY100: INTERNAL", MediaStore.Images.Media.INTERNAL_CONTENT_URI.path.toString())
-        Log.d("COPY100: EXTERNAL", MediaStore.Images.Media.EXTERNAL_CONTENT_URI.path.toString())
-        Log.d("COPY100: FILESDIRE", getExternalFilesDir("").toString())
-        Log.d("COPY100: FILESDIRN", getExternalFilesDir(null).toString())
-        Log.d("COPY100: ENV", Environment.getExternalStorageDirectory().path)
-        Log.d("COPY100: EXTERNAL", MediaStore.Images.Media.EXTERNAL_CONTENT_URI.path.toString())
-
-        Log.d("COPY100: EXTERNAL",
-            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY).path!!
-        )
-        Log.d("COPY100: EXTERNAL",
-            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL).path!!
-        )
-        Log.d("COPY100: EXTERNAL",
-            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_INTERNAL).path!!
-        )
-
-        val dirs = getExternalFilesDirs(null)
-
-        for(dir in dirs) {
-            Log.d("COPY100: DIRS", dir.path)
-        }
-
-        val file = File(MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL).path!!)
-        Log.d("COPY100: FILE-PATH", file.path)
-        Log.d("COPY100: FILE-PATH", file.exists().toString())
-
-        val file2 = File("/storage/4329-1A0A/DCIM/Facebook/")
-        val uri = Uri.fromFile(file2)
-        Log.d("COPY100: URI", uri.toString())
-
-
     }
 }

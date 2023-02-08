@@ -56,9 +56,6 @@ open class Splash : AppCompatActivity() {
         albumes = folders
 
         val intent = Intent(this, MainActivity::class.java)
-            .apply {
-                putExtra("albums", folders)
-            }
         startActivity(intent)
         finish()
     }
