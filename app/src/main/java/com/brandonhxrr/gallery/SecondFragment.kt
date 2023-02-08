@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.AbsListView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.brandonhxrr.gallery.adapter.AlbumAdapter
@@ -17,6 +18,9 @@ import com.brandonhxrr.gallery.databinding.FragmentSecondBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.google.android.material.textview.MaterialTextView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 class SecondFragment : Fragment() {
@@ -65,16 +69,20 @@ class SecondFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        albums = albumes!!
+        lifecycleScope.launch(Dispatchers.IO) {
 
-        if(albums.isNotEmpty()){
-            albumAdapter = AlbumAdapter(builder)
-            albumAdapter.setItems(albums)
-            recyclerView.invalidate()
-            recyclerView.adapter = albumAdapter
+            albums = sortImagesByFolder(getAllImages(requireContext())) as HashMap<File, List<File>>
 
-        }else {
-            activity?.onBackPressed()
+            withContext(Dispatchers.Main) {
+                if(albums.isNotEmpty()){
+                    albumAdapter = AlbumAdapter(builder)
+                    albumAdapter.setItems(albums)
+                    recyclerView.swapAdapter(albumAdapter, false)
+
+                }else {
+                    activity?.onBackPressedDispatcher?.onBackPressed()
+                }
+            }
         }
     }
 }

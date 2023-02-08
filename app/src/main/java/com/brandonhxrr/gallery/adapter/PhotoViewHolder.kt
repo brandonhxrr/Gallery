@@ -5,13 +5,10 @@ import android.app.ActivityOptions
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
-import android.opengl.Visibility
 import android.view.View
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.brandonhxrr.gallery.Photo
-import com.brandonhxrr.gallery.PhotoView
-import com.brandonhxrr.gallery.R
+import com.brandonhxrr.gallery.*
 import com.bumptech.glide.RequestBuilder
 import com.google.gson.Gson
 import java.io.File
@@ -22,9 +19,6 @@ class PhotoViewHolder(view: View ) : RecyclerView.ViewHolder(view){
     private val videoPlaceholder : ImageView = view.findViewById(R.id.placeholder)
 
     fun render(photoModel: Photo, glide: RequestBuilder<Bitmap>, dataList: List<Photo>) {
-
-        val imageExtensions = arrayOf("jpg", "jpeg", "png", "gif", "bmp")
-        val videoExtensions = arrayOf("mp4", "mkv", "avi", "wmv", "mov")
 
         val extension = File(photoModel.path).extension
 

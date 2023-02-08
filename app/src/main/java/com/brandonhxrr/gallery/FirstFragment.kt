@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +15,7 @@ import com.brandonhxrr.gallery.adapter.PhotoAdapter
 import com.brandonhxrr.gallery.databinding.FragmentFirstBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
+import kotlinx.coroutines.*
 
 class FirstFragment : Fragment() {
 
@@ -52,11 +54,11 @@ class FirstFragment : Fragment() {
 
         media = getAllImagesAndVideosSortedByRecent(context)
 
-        myAdapter = PhotoAdapter(media, builder, R.layout.photo)
+        myAdapter = PhotoAdapter(media, builder, R.layout.photo3)
 
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.isNestedScrollingEnabled = false
-        recyclerView.layoutManager = GridLayoutManager(context, 4)
+        recyclerView.layoutManager = GridLayoutManager(context, 3)
         recyclerView.adapter = myAdapter
 
         setUpPagination()
@@ -92,11 +94,13 @@ class FirstFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        media = getAllImagesAndVideosSortedByRecent(requireContext())
+        lifecycleScope.launch(Dispatchers.IO) {
+            media = getAllImagesAndVideosSortedByRecent(requireContext())
 
-        myAdapter = PhotoAdapter(media, builder, R.layout.photo)
-        recyclerView.invalidate()
-        recyclerView.adapter = myAdapter
+            withContext(Dispatchers.Main) {
+                myAdapter = PhotoAdapter(media, builder, R.layout.photo3)
+                recyclerView.swapAdapter(myAdapter, false)
+            }
+        }
     }
-
 }

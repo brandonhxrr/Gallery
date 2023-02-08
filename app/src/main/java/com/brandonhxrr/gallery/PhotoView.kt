@@ -226,7 +226,6 @@ class PhotoView : AppCompatActivity() {
                             dialog.dismiss()
                         })
                         .show()
-
                 }
                 R.id.menu_move -> {
                     val selectionIntent = Intent(this, AlbumSelection::class.java)
