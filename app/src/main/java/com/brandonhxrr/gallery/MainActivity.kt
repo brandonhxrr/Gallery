@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import android.window.OnBackInvokedDispatcher
 import androidx.activity.OnBackPressedCallback
@@ -33,38 +34,42 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val navController = findNavController(R.id.nav_host_fragment_content_main)
-        //appBarConfiguration = AppBarConfiguration(navController.graph)
 
         bottomNavView = findViewById(R.id.bottomNavigationView)
 
         logs()
 
-        bottomNavView.setOnItemSelectedListener {
-            menuItem ->
-            when(menuItem.itemId) {
-                R.id.menu_photos -> {
-                    if (navController.currentDestination?.id == R.id.SecondFragment){
-                        navController.popBackStack()
-                    } else if(navController.currentDestination?.id == R.id.ViewAlbumFragment) {
-                        navController.popBackStack(R.id.FirstFragment, false)
-                    }
-                    true
-                }
-
-                R.id.menu_album -> {
-                    if (navController.currentDestination?.id == R.id.FirstFragment){
-                        val bundle = bundleOf("albums" to albums)
-                        navController.navigate(R.id.action_FirstFragment_to_SecondFragment, bundle)
-                        //navController.navigate(R.id.action_FirstFragment_to_SecondFragment)
-                    }else if(navController.currentDestination?.id == R.id.ViewAlbumFragment) {
-                        navController.popBackStack()
-                    }
-                    true
-                }
-
-                else -> false
+        bottomNavView.setItemOnTouchListener(R.id.menu_photos, View.OnTouchListener { v, event ->
+            if (navController.currentDestination?.id == R.id.SecondFragment){
+                navController.popBackStack()
+            } else if(navController.currentDestination?.id == R.id.ViewAlbumFragment) {
+                navController.popBackStack(R.id.FirstFragment, false)
             }
+            v.performClick()
+            true
+        })
+
+        bottomNavView.setItemOnTouchListener(R.id.menu_album) { v, event ->
+            if (navController.currentDestination?.id == R.id.FirstFragment) {
+                val bundle = bundleOf("albums" to albums)
+                navController.navigate(R.id.action_FirstFragment_to_SecondFragment, bundle)
+            } else if (navController.currentDestination?.id == R.id.ViewAlbumFragment) {
+                navController.popBackStack()
+            }
+            v.performClick()
+            true
         }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                when(navController.currentDestination?.id) {
+                    R.id.SecondFragment -> {
+                        bottomNavView.selectedItemId = R.id.menu_photos
+                    }
+                }
+                navController.navigateUp()
+            }
+        })
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -79,11 +84,6 @@ class MainActivity : AppCompatActivity() {
         //bottomNavView.selectedItemId = navController.currentDestination!!.id
 
         return navUp
-    }
-
-    override fun getOnBackInvokedDispatcher(): OnBackInvokedDispatcher {
-        Toast.makeText(this, "Hola", Toast.LENGTH_SHORT).show()
-        return super.getOnBackInvokedDispatcher()
     }
 
     private fun logs(){
