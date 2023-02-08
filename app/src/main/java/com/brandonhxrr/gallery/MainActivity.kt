@@ -5,6 +5,9 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
+import android.window.OnBackInvokedDispatcher
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.core.view.WindowCompat
@@ -62,7 +65,6 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
-
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -74,8 +76,14 @@ class MainActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setDisplayShowHomeEnabled(false)
+        //bottomNavView.selectedItemId = navController.currentDestination!!.id
 
         return navUp
+    }
+
+    override fun getOnBackInvokedDispatcher(): OnBackInvokedDispatcher {
+        Toast.makeText(this, "Hola", Toast.LENGTH_SHORT).show()
+        return super.getOnBackInvokedDispatcher()
     }
 
     private fun logs(){

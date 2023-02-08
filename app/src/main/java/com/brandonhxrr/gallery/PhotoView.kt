@@ -2,14 +2,15 @@ package com.brandonhxrr.gallery
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.DialogInterface
-import android.content.Intent
+import android.app.RecoverableSecurityException
+import android.content.*
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.InsetDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.util.TypedValue
 import android.view.MenuItem
@@ -18,6 +19,8 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MenuRes
 import androidx.appcompat.app.AppCompatActivity
@@ -29,12 +32,14 @@ import androidx.core.content.FileProvider
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.brandonhxrr.gallery.adapter.ViewPagerAdapter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.gson.Gson
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -59,7 +64,8 @@ class PhotoView : AppCompatActivity() {
     private lateinit var windowInsetsController : WindowInsetsControllerCompat
     private lateinit var operation: String
     private lateinit var currentFile: File
-    private val REQUEST_ID = 77
+    private var deletedImageUri: Uri? = null
+    private lateinit var intentSenderLauncher: ActivityResultLauncher<IntentSenderRequest>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -134,6 +140,18 @@ class PhotoView : AppCompatActivity() {
         btnMenu.setOnClickListener {
             showSubmenu(it, R.menu.menu_submenu)
         }
+
+        intentSenderLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
+            if(it.resultCode == RESULT_OK) {
+                if(Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+                    lifecycleScope.launch {
+                        deletePhotoFromExternal(deletedImageUri ?: return@launch)
+                    }
+                }
+            } else {
+                Toast.makeText(this, "File couldn't be deleted", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
     override fun onSupportNavigateUp(): Boolean {
         onBackPressedDispatcher.onBackPressed()
@@ -171,20 +189,13 @@ class PhotoView : AppCompatActivity() {
             popup.setOnMenuItemClickListener { menuItem: MenuItem ->
                 when (menuItem.itemId) {
                     R.id.menu_delete -> {
-                        currentFile.delete()
-                        media = ArrayList(media!!).apply { removeAt(position) }
-
-                        if((media as ArrayList<Photo>).isNotEmpty()){
-                            viewPagerAdapter.updateData(media!!)
-                            viewPager.adapter = viewPagerAdapter
-                            viewPager.invalidate()
-                            setDateTime(position)
-                            viewPager.currentItem = position
-                            currentFile = File(media!![position].path)
+                        if(currentFile.delete()){
+                            removeImageFromAdapter()
+                        }else if(deletePhotoFromExternal(getContentUri(this, currentFile)!!)) {
+                           removeImageFromAdapter()
                         }else {
-                            this.onBackPressed()
+                            Toast.makeText(this, "File couldn't be deleted", Toast.LENGTH_SHORT).show()
                         }
-
                     }
                 }
                 true
@@ -192,6 +203,23 @@ class PhotoView : AppCompatActivity() {
             popup.setOnDismissListener {
             }
             popup.show()
+        }
+    }
+
+    private fun removeImageFromAdapter(){
+        media = ArrayList(media!!).apply { removeAt(position) }
+
+        if((media as ArrayList<Photo>).isNotEmpty()){
+            viewPagerAdapter.updateData(media!!)
+            viewPager.adapter = viewPagerAdapter
+            viewPager.invalidate()
+            viewPager.currentItem = position
+            currentFile = File(media!![position].path)
+            setDateTime(position)
+
+            Toast.makeText(this, "File deleted successfully", Toast.LENGTH_SHORT).show()
+        }else {
+            onBackPressedDispatcher.onBackPressed()
         }
     }
     private fun showSubmenu(v: View, @MenuRes menuRes: Int) {
@@ -336,6 +364,7 @@ class PhotoView : AppCompatActivity() {
         photoTime.text = outputFormatTime.format(dateParse)
     }
 
+    @SuppressLint("InternalInsetResource")
     private fun getStatusBarHeight(): Int {
         val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
         return if (resourceId != 0) {
@@ -364,5 +393,30 @@ class PhotoView : AppCompatActivity() {
             Toast.makeText(this, "Error copying file", Toast.LENGTH_SHORT).show()
             Log.e("Error", "Error copying file", e)
         }
+    }
+
+    private fun deletePhotoFromExternal(photoUri: Uri): Boolean{
+        try {
+            contentResolver.delete(photoUri, null, null)
+            return true
+        } catch (e: SecurityException) {
+            val intentSender = when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+                    MediaStore.createDeleteRequest(contentResolver, listOf(photoUri))
+                }
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+                    val recoverableSecurityException = e as? RecoverableSecurityException
+                    recoverableSecurityException?.userAction?.actionIntent?.intentSender
+                }
+                else -> null
+            }
+            intentSender?.let { sender ->
+                intentSenderLauncher.launch(
+                    IntentSenderRequest.Builder(sender as IntentSender).build()
+                )
+                return true
+            }
+        }
+        return false
     }
 }
