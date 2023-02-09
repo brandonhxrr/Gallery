@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
 import android.util.TypedValue
@@ -12,7 +13,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -29,7 +29,6 @@ import com.brandonhxrr.gallery.R
 import com.bumptech.glide.Glide
 import com.github.chrisbanes.photoview.PhotoView
 import java.io.File
-
 
 class ViewPagerAdapter(
     val context: Context,
@@ -60,10 +59,6 @@ class ViewPagerAdapter(
         val imageView: PhotoView = itemView.findViewById(R.id.displayImage)
         val playButton: ImageView = itemView.findViewById(R.id.play_button)
 
-        //toolbar.visibility = View.GONE
-        //windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
-        //constraintContainer.setBackgroundColor(Color.BLACK)
-
         val videoExtensions = arrayOf("mp4", "mkv", "avi", "wmv", "mov")
 
         imageList[position].let {
@@ -84,8 +79,16 @@ class ViewPagerAdapter(
                 hideStatusBar()
             }
 
+            imageView.maximumScale = 20f
+
+            val options = BitmapFactory.Options().apply {
+                inJustDecodeBounds = true
+            }
+            BitmapFactory.decodeFile(it.path, options)
+
             Glide.with(context)
                 .load(it.path)
+                .override(options.outWidth, options.outHeight)
                 .into(imageView)
         }
 
@@ -140,15 +143,5 @@ class ViewPagerAdapter(
     fun updateData(media: List<Photo>) {
         imageList = media
         this.notifyDataSetChanged()
-    }
-
-    @ColorInt
-    fun Context.getColorFromAttr(
-        @AttrRes attrColor: Int,
-        typedValue: TypedValue = TypedValue(),
-        resolveRefs: Boolean = true
-    ): Int {
-        theme.resolveAttribute(attrColor, typedValue, resolveRefs)
-        return typedValue.data
     }
 }
