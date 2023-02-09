@@ -26,7 +26,6 @@ class AlbumSelectionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     private val image: ImageView = view.findViewById(R.id.album_image)
     private val title: TextView = view.findViewById(R.id.album_title)
     private val counter: TextView = view.findViewById(R.id.album_counter)
-    private val container: ConstraintLayout = view.findViewById(R.id.constraintContainer)
 
     companion object {
         fun new(viewGroup: ViewGroup) = AlbumSelectionViewHolder(
@@ -50,8 +49,7 @@ class AlbumSelectionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
                 counter.text = if (items > 1) "$items items" else  "1 item"
 
-                container.setOnClickListener {
-
+                image.setOnClickListener {
                     val intent = Intent()
                     intent.putExtra("RUTA", parent.absolutePath)
                     (it.context as Activity).setResult(Activity.RESULT_OK, intent)
