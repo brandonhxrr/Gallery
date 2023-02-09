@@ -18,13 +18,18 @@ class PhotoViewHolder(view: View ) : RecyclerView.ViewHolder(view){
     private val image : ImageView = view.findViewById(R.id.item_photo)
     private val videoPlaceholder : ImageView = view.findViewById(R.id.placeholder)
 
-    fun render(photoModel: Photo, glide: RequestBuilder<Bitmap>, dataList: List<Photo>) {
+    fun render(
+        photoModel: Photo,
+        glide: RequestBuilder<Bitmap>,
+        dataList: List<Photo>
+    ) {
 
         val extension = File(photoModel.path).extension
 
         glide.load(photoModel.path).centerCrop().into(image)
 
         if(extension in imageExtensions){
+            videoPlaceholder.visibility = View.GONE
 
             image.setOnClickListener {
 
@@ -40,8 +45,8 @@ class PhotoViewHolder(view: View ) : RecyclerView.ViewHolder(view){
                 intent.putExtra("position", photoModel.position)
                 it.context.startActivity(intent, activityOptions.toBundle())
             }
-            videoPlaceholder.visibility = View.INVISIBLE
-        }else if(extension in videoExtensions) {
+        }else{
+            videoPlaceholder.visibility = View.VISIBLE
             image.setOnClickListener {
                 val videoUri: Uri = Uri.parse(photoModel.path)
                 val intent = Intent(Intent.ACTION_VIEW,videoUri)

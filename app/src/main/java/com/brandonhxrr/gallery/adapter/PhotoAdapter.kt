@@ -5,13 +5,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.brandonhxrr.gallery.Photo
+import com.brandonhxrr.gallery.R
 import com.brandonhxrr.gallery.getImagesFromPage
 import com.bumptech.glide.RequestBuilder
 
 class PhotoAdapter(
     private val photoList: List<Photo>,
-    private val glide: RequestBuilder<Bitmap>,
-    private val layout: Int
+    private val glide: RequestBuilder<Bitmap>
 ) : RecyclerView.Adapter<PhotoViewHolder>() {
     private var pageNumber: Int = 1
     private val limitPage = (photoList.size / 100) + 1
@@ -19,7 +19,7 @@ class PhotoAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        return PhotoViewHolder(layoutInflater.inflate(layout, parent, false))
+        return PhotoViewHolder(layoutInflater.inflate(R.layout.photo, parent, false))
     }
 
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {

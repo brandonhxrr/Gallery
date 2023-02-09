@@ -92,7 +92,7 @@ class ViewAlbum : Fragment() {
 
         media = getImagesFromAlbum(album.path)
 
-        myAdapter = PhotoAdapter(media, builder, R.layout.photo3)
+        myAdapter = PhotoAdapter(media, builder)
 
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.isNestedScrollingEnabled = false
@@ -137,7 +137,7 @@ class ViewAlbum : Fragment() {
             album.itemsNumber = getImageVideoNumber(File(album.path))
 
             withContext(Dispatchers.Main){
-                myAdapter = PhotoAdapter(media, builder, R.layout.photo3)
+                myAdapter = PhotoAdapter(media, builder)
                 recyclerView.swapAdapter(myAdapter, false)
 
                 if(media.isNotEmpty()){

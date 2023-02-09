@@ -54,11 +54,11 @@ class FirstFragment : Fragment() {
 
         media = getAllImagesAndVideosSortedByRecent(context)
 
-        myAdapter = PhotoAdapter(media, builder, R.layout.photo3)
+        myAdapter = PhotoAdapter(media, builder)
 
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.isNestedScrollingEnabled = false
-        recyclerView.layoutManager = GridLayoutManager(context, 3)
+        recyclerView.layoutManager = GridLayoutManager(context, 4)
         recyclerView.adapter = myAdapter
 
         setUpPagination()
@@ -98,7 +98,7 @@ class FirstFragment : Fragment() {
             media = getAllImagesAndVideosSortedByRecent(requireContext())
 
             withContext(Dispatchers.Main) {
-                myAdapter = PhotoAdapter(media, builder, R.layout.photo3)
+                myAdapter = PhotoAdapter(media, builder)
                 recyclerView.swapAdapter(myAdapter, false)
             }
         }
