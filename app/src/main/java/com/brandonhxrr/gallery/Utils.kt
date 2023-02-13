@@ -18,8 +18,10 @@ import kotlin.collections.HashMap
 val imageExtensions = arrayOf("jpg", "jpeg", "png", "gif", "bmp", "webp")
 val videoExtensions = arrayOf("mp4", "mkv", "avi", "wmv", "mov")
 val fileExtensions = imageExtensions.plus(videoExtensions)
+var selectable = false
 
 var albumes: HashMap<File, List<File>>? = null
+var selectedItems : List<Photo> = arrayListOf()
 
 fun sortImagesByFolder(files: List<File>): Map<File, List<File>> {
     val resultMap = mutableMapOf<File, MutableList<File>>()
@@ -36,7 +38,7 @@ fun getImagesFromAlbum(folder: String): List<Photo> {
     return File(folder)
         .listFiles { file -> file.isFile && fileExtensions.contains(file.extension) }
         ?.sortedWith(compareByDescending { it.lastModified() })
-        ?.map { file -> Photo(path = file.absolutePath, position = 0) }
+        ?.map { file -> Photo(path = file.absolutePath, position = 0, selected = false) }
         ?: emptyList()
 }
 
@@ -61,7 +63,7 @@ fun getAllImagesAndVideosSortedByRecent(context: Context): List<Photo> {
         .use { it?.getResultsFromCursor() ?: listOf() }
 
     val resultList = (imageList + videoList).sortedWith(compareByDescending { it.lastModified() })
-    return resultList.map { file -> Photo(path = file.absolutePath, position = 0) }
+    return resultList.map { file -> Photo(path = file.absolutePath, position = 0, selected = false) }
 }
 
 fun getImagesFromPage(page: Int, data: List<Photo>): List<Photo> {

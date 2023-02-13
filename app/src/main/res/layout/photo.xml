@@ -15,4 +15,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/play_button" />
+    <ImageView
+        android:id="@+id/selected"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/file_selected" />
 </com.brandonhxrr.gallery.SquareFrameLayout>
