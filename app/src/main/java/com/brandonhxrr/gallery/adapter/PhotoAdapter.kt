@@ -56,4 +56,12 @@ class PhotoAdapter(
         dataList[position].selected = false
         itemsList.remove(dataList[position])
     }
+
+    fun selectAllItems() {
+        itemsList.clear()
+        for(item in dataList){
+            item.selected = true
+            itemsList.add(item)
+        }
+    }
 }

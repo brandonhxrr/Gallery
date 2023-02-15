@@ -7,6 +7,7 @@ import android.view.*
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.lifecycleScope
@@ -147,6 +148,26 @@ class ViewAlbum : Fragment() {
         super.onResume()
 
         selectableToolbar.inflateMenu(R.menu.menu_selectable_album)
+
+        selectableToolbar.setOnMenuItemClickListener {menuItem ->
+            when(menuItem.itemId){
+                R.id.menu_copy -> {
+                    Toast.makeText(requireContext(), "COPY", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                R.id.menu_move -> {
+                    Toast.makeText(requireContext(), "MOVE", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                R.id.menu_select_all -> {
+                    myAdapter.selectAllItems()
+                    showDeleteMenu(true, itemsList.size)
+                    myAdapter.notifyDataSetChanged()
+                    true
+                }
+                else -> false
+            }
+        }
 
         lifecycleScope.launch(Dispatchers.IO) {
             media = getImagesFromAlbum(album.path)

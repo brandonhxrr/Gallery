@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -114,6 +115,19 @@ class FirstFragment : Fragment() {
         toolbar = (activity as AppCompatActivity).findViewById(R.id.toolbar)
         selectableToolbar = (activity as AppCompatActivity).findViewById(R.id.selectable_toolbar)
         selectableToolbar.inflateMenu(R.menu.menu_selectable)
+        selectableToolbar.setOnMenuItemClickListener {menuItem ->
+            when(menuItem.itemId){
+                R.id.menu_copy -> {
+                    Toast.makeText(requireContext(), "COPY", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                R.id.menu_move -> {
+                    Toast.makeText(requireContext(), "MOVE", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                else -> false
+            }
+        }
 
         super.onResume()
         lifecycleScope.launch(Dispatchers.IO) {
