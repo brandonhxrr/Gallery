@@ -35,7 +35,6 @@ class FirstFragment : Fragment() {
     private lateinit var myAdapter: PhotoAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var media: List<Photo>
-    private lateinit var mainMenu: Menu
     private lateinit var toolbar: Toolbar
     private lateinit var selectableToolbar: Toolbar
 
@@ -105,6 +104,7 @@ class FirstFragment : Fragment() {
     override fun onResume() {
         toolbar = (activity as AppCompatActivity).findViewById(R.id.toolbar)
         selectableToolbar = (activity as AppCompatActivity).findViewById(R.id.selectable_toolbar)
+        selectableToolbar.inflateMenu(R.menu.menu_selectable)
 
         super.onResume()
         lifecycleScope.launch(Dispatchers.IO) {
@@ -119,32 +119,11 @@ class FirstFragment : Fragment() {
         }
     }
 
-    override fun onCreateContextMenu(
-        menu: ContextMenu,
-        v: View,
-        menuInfo: ContextMenu.ContextMenuInfo?
-    ) {
-        mainMenu = menu
-        super.onCreateContextMenu(menu, v, menuInfo)
-    }
-
-    fun showDeleteMenu(show: Boolean, items: Number) {
+    private fun showDeleteMenu(show: Boolean, items: Number) {
         when(show){
             true -> {
-                //(activity as AppCompatActivity).findViewById<ImageView>(R.id.app_logo).visibility = View.GONE
-                //(activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).visibility = View.GONE
-                //(activity as AppCompatActivity).setSupportActionBar(toolbar)
-
-                //(activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-                //(activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(true)
-                //(activity as AppCompatActivity).supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close)
-
-                //toolbar.title = items.toString()
-                //toolbar.inflateMenu(R.menu.menu_selectable)
                 toolbar.visibility = View.GONE
                 selectableToolbar.visibility = View.VISIBLE
-                selectableToolbar.inflateMenu(R.menu.menu_selectable)
-                //selectableToolbar.setMenu()
                 (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.text_items_num).text = items.toString()
                 (activity as AppCompatActivity).findViewById<ImageButton>(R.id.btn_close).setOnClickListener {
                     showDeleteMenu(false, 0)
@@ -157,20 +136,7 @@ class FirstFragment : Fragment() {
             false -> {
                 toolbar.visibility = View.VISIBLE
                 selectableToolbar.visibility = View.GONE
-                /*(activity as AppCompatActivity).findViewById<ImageView>(R.id.app_logo).visibility = View.VISIBLE
-                (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).visibility = View.VISIBLE
-                (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
-                (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(false)
-
-                toolbar.title = ""
-                toolbar.invalidate()
-                toolbar.removeAllViews()*/
             }
         }
-        //mainMenu.findItem(R.id.menu_delete)?.isVisible = show
-    }
-
-    fun delete(){
-
     }
 }

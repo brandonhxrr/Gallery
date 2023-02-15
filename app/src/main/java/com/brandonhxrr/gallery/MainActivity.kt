@@ -72,50 +72,12 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         val appBarConfiguration = AppBarConfiguration(navController.graph)
 
-        var navUp: Boolean = false
-
-        if(itemsList.isEmpty()){
-             navUp = navController.navigateUp(appBarConfiguration)
-                    || super.onSupportNavigateUp()
-        }else{
-            itemsList.clear()
-            findViewById<ImageView>(R.id.app_logo).visibility = View.VISIBLE
-            findViewById<MaterialTextView>(R.id.textAppbar).visibility = View.VISIBLE
-            selectable = false
-            toolbar.title = ""
-        }
+        val navUp = navController.navigateUp(appBarConfiguration)
+                || super.onSupportNavigateUp()
 
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setDisplayShowHomeEnabled(false)
 
         return navUp
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        mainMenu = menu!!
-        menuInflater.inflate(R.menu.menu_selectable, mainMenu)
-        showDeleteMenu(false)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.menu_delete -> {
-                delete()
-            }
-
-            R.id.menu_more -> {
-
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    fun showDeleteMenu(show: Boolean) {
-        mainMenu.findItem(R.id.menu_delete)?.isVisible = show
-    }
-
-    fun delete(){
-
     }
 }

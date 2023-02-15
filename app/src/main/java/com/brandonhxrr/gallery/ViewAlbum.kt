@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.*
+import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
@@ -39,7 +40,7 @@ class ViewAlbum : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var media: List<Photo>
     private lateinit var txtAlbumEmpty: MaterialTextView
-    private lateinit var mainMenu: Menu
+    private lateinit var selectableToolbar: Toolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +63,7 @@ class ViewAlbum : Fragment() {
         (activity as AppCompatActivity).findViewById<ImageView>(R.id.app_logo).visibility = View.GONE
 
         toolbar = (activity as AppCompatActivity).findViewById(R.id.toolbar)
+        selectableToolbar = (activity as AppCompatActivity).findViewById(R.id.selectable_toolbar)
         txtAlbumEmpty = (activity as AppCompatActivity).findViewById(R.id.album_empty)
 
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
@@ -159,14 +161,21 @@ class ViewAlbum : Fragment() {
     private fun showDeleteMenu(show: Boolean, items: Number) {
         when(show){
             true -> {
-                (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).visibility = View.GONE
-                toolbar.title = items.toString()
+                toolbar.visibility = View.GONE
+                selectableToolbar.visibility = View.VISIBLE
+                (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.text_items_num).text = items.toString()
+                (activity as AppCompatActivity).findViewById<ImageButton>(R.id.btn_close).setOnClickListener {
+                    showDeleteMenu(false, 0)
+                    itemsList.clear()
+                    selectable = false
+                    myAdapter.resetItemsSelected()
+                    myAdapter.notifyDataSetChanged()
+                }
             }
             false -> {
-                (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).visibility = View.VISIBLE
-                toolbar.title = ""
+                toolbar.visibility = View.VISIBLE
+                selectableToolbar.visibility = View.GONE
             }
         }
-        //mainMenu.findItem(R.id.menu_delete)?.isVisible = show
     }
 }
