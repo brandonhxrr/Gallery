@@ -9,8 +9,6 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.provider.MediaStore.MediaColumns
-import android.util.Log
-import android.webkit.MimeTypeMap
 import java.io.File
 import java.util.*
 import kotlin.collections.HashMap

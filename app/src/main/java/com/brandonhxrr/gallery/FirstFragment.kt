@@ -30,7 +30,6 @@ class FirstFragment : Fragment() {
     private var visibleItemCount = 0
     private var totalItemCount = 0
     private var loading = true
-
     private lateinit var builder: RequestBuilder<Bitmap>
     private lateinit var myAdapter: PhotoAdapter
     private lateinit var recyclerView: RecyclerView
@@ -50,6 +49,16 @@ class FirstFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        if(selectableToolbar.visibility == View.VISIBLE){
+            showDeleteMenu(false, 0)
+            itemsList.clear()
+            selectable = false
+            myAdapter.resetItemsSelected()
+            myAdapter.notifyDataSetChanged()
+        }
+
+        selectableToolbar.menu.clear()
+
         _binding = null
     }
 

@@ -1,10 +1,7 @@
 package com.brandonhxrr.gallery
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -12,16 +9,17 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
+import androidx.recyclerview.widget.RecyclerView
 import com.brandonhxrr.gallery.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.textview.MaterialTextView
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var bottomNavView: BottomNavigationView
-    private lateinit var mainMenu: Menu
     private lateinit var toolbar: Toolbar
+    private lateinit var selectableToolbar: Toolbar
+    private lateinit var recyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -34,6 +32,7 @@ class MainActivity : AppCompatActivity() {
 
         bottomNavView = findViewById(R.id.bottomNavigationView)
         toolbar = findViewById(R.id.toolbar)
+        selectableToolbar = findViewById(R.id.selectable_toolbar)
 
         bottomNavView.setItemOnTouchListener(R.id.menu_photos) { v, _ ->
             if (navController.currentDestination?.id == R.id.SecondFragment) {
@@ -57,27 +56,32 @@ class MainActivity : AppCompatActivity() {
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                when(navController.currentDestination?.id) {
-                    R.id.SecondFragment -> {
-                        bottomNavView.selectedItemId = R.id.menu_photos
+                if(selectableToolbar.visibility == View.VISIBLE){
+                    recyclerView = findViewById(R.id.gridRecyclerView)
+                    selectableToolbar.visibility = View.GONE
+                    toolbar.visibility = View.VISIBLE
+                    itemsList.clear()
+                    selectable = false
+                    recyclerView.adapter?.notifyDataSetChanged()
+                }else {
+                    when(navController.currentDestination?.id) {
+                        R.id.SecondFragment -> {
+                            bottomNavView.selectedItemId = R.id.menu_photos
+                        }
                     }
+                    navController.navigateUp()
                 }
-                navController.navigateUp()
             }
         })
     }
 
     override fun onSupportNavigateUp(): Boolean {
-
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         val appBarConfiguration = AppBarConfiguration(navController.graph)
-
-        val navUp = navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
 
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setDisplayShowHomeEnabled(false)
 
-        return navUp
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 }

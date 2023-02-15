@@ -82,6 +82,17 @@ class ViewAlbum : Fragment() {
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(false)
         txtAlbumEmpty.visibility = View.GONE
+
+        if(selectableToolbar.visibility == View.VISIBLE){
+            showDeleteMenu(false, 0)
+            itemsList.clear()
+            selectable = false
+            myAdapter.resetItemsSelected()
+            myAdapter.notifyDataSetChanged()
+        }
+
+        selectableToolbar.menu.clear()
+
         _binding = null
     }
 
@@ -134,6 +145,8 @@ class ViewAlbum : Fragment() {
 
     override fun onResume() {
         super.onResume()
+
+        selectableToolbar.inflateMenu(R.menu.menu_selectable_album)
 
         lifecycleScope.launch(Dispatchers.IO) {
             media = getImagesFromAlbum(album.path)
