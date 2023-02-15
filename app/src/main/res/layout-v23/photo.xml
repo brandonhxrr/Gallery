@@ -21,5 +21,5 @@
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/file_selected" />
+        android:src="@drawable/file_unselected" />
 </com.brandonhxrr.gallery.SquareFrameLayout>

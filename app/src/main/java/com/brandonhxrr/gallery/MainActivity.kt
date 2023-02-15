@@ -10,6 +10,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.recyclerview.widget.RecyclerView
+import com.brandonhxrr.gallery.adapter.PhotoAdapter
 import com.brandonhxrr.gallery.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -62,6 +63,7 @@ class MainActivity : AppCompatActivity() {
                     toolbar.visibility = View.VISIBLE
                     itemsList.clear()
                     selectable = false
+                    (recyclerView.adapter as PhotoAdapter).resetItemsSelected()
                     recyclerView.adapter?.notifyDataSetChanged()
                 }else {
                     when(navController.currentDestination?.id) {

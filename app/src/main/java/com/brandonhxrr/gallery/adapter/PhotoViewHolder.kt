@@ -56,7 +56,7 @@ class PhotoViewHolder(view: View,val adapter: PhotoAdapter, private val showDele
             true
         }
 
-        if(dataList[photoModel.position].selected){
+        if(photoModel.selected){
             Glide.with(image.context).load(R.drawable.file_selected).into(fileSelected)
         }else {
             Glide.with(image.context).load(R.drawable.file_unselected).into(fileSelected)
