@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.*
+import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -36,6 +37,7 @@ class FirstFragment : Fragment() {
     private lateinit var media: List<Photo>
     private lateinit var mainMenu: Menu
     private lateinit var toolbar: Toolbar
+    private lateinit var selectableToolbar: Toolbar
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -102,6 +104,7 @@ class FirstFragment : Fragment() {
 
     override fun onResume() {
         toolbar = (activity as AppCompatActivity).findViewById(R.id.toolbar)
+        selectableToolbar = (activity as AppCompatActivity).findViewById(R.id.selectable_toolbar)
 
         super.onResume()
         lifecycleScope.launch(Dispatchers.IO) {
@@ -125,17 +128,43 @@ class FirstFragment : Fragment() {
         super.onCreateContextMenu(menu, v, menuInfo)
     }
 
-    private fun showDeleteMenu(show: Boolean, items: Number) {
+    fun showDeleteMenu(show: Boolean, items: Number) {
         when(show){
             true -> {
-                (activity as AppCompatActivity).findViewById<ImageView>(R.id.app_logo).visibility = View.GONE
-                (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).visibility = View.GONE
-                toolbar.title = items.toString()
+                //(activity as AppCompatActivity).findViewById<ImageView>(R.id.app_logo).visibility = View.GONE
+                //(activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).visibility = View.GONE
+                //(activity as AppCompatActivity).setSupportActionBar(toolbar)
+
+                //(activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                //(activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(true)
+                //(activity as AppCompatActivity).supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close)
+
+                //toolbar.title = items.toString()
+                //toolbar.inflateMenu(R.menu.menu_selectable)
+                toolbar.visibility = View.GONE
+                selectableToolbar.visibility = View.VISIBLE
+                selectableToolbar.inflateMenu(R.menu.menu_selectable)
+                //selectableToolbar.setMenu()
+                (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.text_items_num).text = items.toString()
+                (activity as AppCompatActivity).findViewById<ImageButton>(R.id.btn_close).setOnClickListener {
+                    showDeleteMenu(false, 0)
+                    itemsList.clear()
+                    selectable = false
+                    myAdapter.resetItemsSelected()
+                    myAdapter.notifyDataSetChanged()
+                }
             }
             false -> {
-                (activity as AppCompatActivity).findViewById<ImageView>(R.id.app_logo).visibility = View.VISIBLE
+                toolbar.visibility = View.VISIBLE
+                selectableToolbar.visibility = View.GONE
+                /*(activity as AppCompatActivity).findViewById<ImageView>(R.id.app_logo).visibility = View.VISIBLE
                 (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).visibility = View.VISIBLE
+                (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+                (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(false)
+
                 toolbar.title = ""
+                toolbar.invalidate()
+                toolbar.removeAllViews()*/
             }
         }
         //mainMenu.findItem(R.id.menu_delete)?.isVisible = show

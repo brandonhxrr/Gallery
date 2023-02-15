@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/menu_delete"
+        android:id="@+id/menu_move"
         android:enabled="true"
-        android:icon="@drawable/ic_delete"
-        android:title="@string/menu_photos"/>
+        android:title="Mover a"/>
     <item
-        android:id="@+id/menu_more"
+        android:id="@+id/menu_copy"
         android:enabled="true"
-        android:icon="@drawable/ic_menu_vertical"
-        android:title="@string/menu_albums"/>
+        android:title="Copiar a"/>
 </menu>
