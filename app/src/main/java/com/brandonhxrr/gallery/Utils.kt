@@ -21,7 +21,7 @@ val fileExtensions = imageExtensions.plus(videoExtensions)
 var selectable = false
 
 var albumes: HashMap<File, List<File>>? = null
-var selectedItems : List<Photo> = arrayListOf()
+var itemsList = mutableListOf<Photo>()
 
 fun sortImagesByFolder(files: List<File>): Map<File, List<File>> {
     val resultMap = mutableMapOf<File, MutableList<File>>()

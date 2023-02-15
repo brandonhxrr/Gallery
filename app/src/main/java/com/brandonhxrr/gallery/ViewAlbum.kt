@@ -3,10 +3,8 @@ package com.brandonhxrr.gallery
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -41,6 +39,7 @@ class ViewAlbum : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var media: List<Photo>
     private lateinit var txtAlbumEmpty: MaterialTextView
+    private lateinit var mainMenu: Menu
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,7 +91,9 @@ class ViewAlbum : Fragment() {
 
         media = getImagesFromAlbum(album.path)
 
-        myAdapter = PhotoAdapter(media, builder)
+        myAdapter = PhotoAdapter(media, builder) { show, items ->
+            showDeleteMenu(show, items)
+        }
 
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.isNestedScrollingEnabled = false
@@ -137,7 +138,9 @@ class ViewAlbum : Fragment() {
             album.itemsNumber = getImageVideoNumber(File(album.path))
 
             withContext(Dispatchers.Main){
-                myAdapter = PhotoAdapter(media, builder)
+                myAdapter = PhotoAdapter(media, builder) { show, items ->
+                    showDeleteMenu(show, items)
+                }
                 recyclerView.swapAdapter(myAdapter, false)
 
                 if(media.isNotEmpty()){
@@ -151,5 +154,19 @@ class ViewAlbum : Fragment() {
                 }
             }
         }
+    }
+
+    private fun showDeleteMenu(show: Boolean, items: Number) {
+        when(show){
+            true -> {
+                (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).visibility = View.GONE
+                toolbar.title = items.toString()
+            }
+            false -> {
+                (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).visibility = View.VISIBLE
+                toolbar.title = ""
+            }
+        }
+        //mainMenu.findItem(R.id.menu_delete)?.isVisible = show
     }
 }

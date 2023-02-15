@@ -15,7 +15,7 @@ import com.bumptech.glide.RequestBuilder
 import com.google.gson.Gson
 import java.io.File
 
-class PhotoViewHolder(view: View,val adapter: PhotoAdapter) : RecyclerView.ViewHolder(view){
+class PhotoViewHolder(view: View,val adapter: PhotoAdapter, private val showDeleteMenu: (Boolean, Number) -> Unit) : RecyclerView.ViewHolder(view){
 
     private val image : ImageView = view.findViewById(R.id.item_photo)
     private val videoPlaceholder : ImageView = view.findViewById(R.id.placeholder)
@@ -44,13 +44,14 @@ class PhotoViewHolder(view: View,val adapter: PhotoAdapter) : RecyclerView.ViewH
         }
 
         image.setOnLongClickListener {
-            if(adapter.itemsList.isEmpty()){
+            if(itemsList.isEmpty()){
                 dataList[photoModel.position].selected = true
                 adapter.setSelectedItem(photoModel.position)
                 Glide.with(image.context).load(R.drawable.file_selected).into(fileSelected)
-                Log.d("COPY100: SItems",adapter.itemsList.toString())
+                Log.d("COPY100: SItemsL", itemsList.toString())
                 selectable = true
                 bindingAdapter?.notifyDataSetChanged()
+                showDeleteMenu(true, itemsList.size)
             }
             true
         }
@@ -84,6 +85,7 @@ class PhotoViewHolder(view: View,val adapter: PhotoAdapter) : RecyclerView.ViewH
 
         fileSelected.setOnClickListener {
             photoModel.selected = !photoModel.selected
+
             if(photoModel.selected){
                 dataList[photoModel.position].selected = true
                 adapter.setSelectedItem(photoModel.position)
@@ -92,6 +94,15 @@ class PhotoViewHolder(view: View,val adapter: PhotoAdapter) : RecyclerView.ViewH
                 dataList[photoModel.position].selected = false
                 adapter.removeSelectedItem(photoModel.position)
                 Glide.with(image.context).load(R.drawable.file_unselected).into(fileSelected)
+            }
+            Log.d("COPY100: SItemsC", itemsList.toString())
+
+            if(itemsList.isEmpty()){
+                selectable = false
+                showDeleteMenu(false, itemsList.size)
+                bindingAdapter?.notifyDataSetChanged()
+            }else {
+                showDeleteMenu(true, itemsList.size)
             }
         }
     }

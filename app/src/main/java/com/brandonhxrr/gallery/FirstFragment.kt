@@ -1,12 +1,14 @@
 package com.brandonhxrr.gallery
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.view.*
+import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
@@ -15,6 +17,7 @@ import com.brandonhxrr.gallery.adapter.PhotoAdapter
 import com.brandonhxrr.gallery.databinding.FragmentFirstBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
+import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.*
 
 class FirstFragment : Fragment() {
@@ -31,6 +34,8 @@ class FirstFragment : Fragment() {
     private lateinit var myAdapter: PhotoAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var media: List<Photo>
+    private lateinit var mainMenu: Menu
+    private lateinit var toolbar: Toolbar
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -38,6 +43,7 @@ class FirstFragment : Fragment() {
     ): View {
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
         initRecyclerView(requireContext())
+
         return binding.root
     }
 
@@ -49,13 +55,15 @@ class FirstFragment : Fragment() {
     private fun initRecyclerView(context:Context) {
         recyclerView = binding.gridRecyclerView
 
+
         val glide = Glide.with(this)
         builder = glide.asBitmap()
 
         media = getAllImagesAndVideosSortedByRecent(context)
 
-        myAdapter = PhotoAdapter(media, builder)
-
+        myAdapter = PhotoAdapter(media, builder) { show, items ->
+            showDeleteMenu(show, items)
+        }
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.isNestedScrollingEnabled = false
         recyclerView.layoutManager = GridLayoutManager(context, 4)
@@ -93,14 +101,47 @@ class FirstFragment : Fragment() {
     }
 
     override fun onResume() {
+        toolbar = (activity as AppCompatActivity).findViewById(R.id.toolbar)
+
         super.onResume()
         lifecycleScope.launch(Dispatchers.IO) {
             media = getAllImagesAndVideosSortedByRecent(requireContext())
 
             withContext(Dispatchers.Main) {
-                myAdapter = PhotoAdapter(media, builder)
+                myAdapter = PhotoAdapter(media, builder) { show, items ->
+                    showDeleteMenu(show, items)
+                }
                 recyclerView.swapAdapter(myAdapter, false)
             }
         }
+    }
+
+    override fun onCreateContextMenu(
+        menu: ContextMenu,
+        v: View,
+        menuInfo: ContextMenu.ContextMenuInfo?
+    ) {
+        mainMenu = menu
+        super.onCreateContextMenu(menu, v, menuInfo)
+    }
+
+    private fun showDeleteMenu(show: Boolean, items: Number) {
+        when(show){
+            true -> {
+                (activity as AppCompatActivity).findViewById<ImageView>(R.id.app_logo).visibility = View.GONE
+                (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).visibility = View.GONE
+                toolbar.title = items.toString()
+            }
+            false -> {
+                (activity as AppCompatActivity).findViewById<ImageView>(R.id.app_logo).visibility = View.VISIBLE
+                (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).visibility = View.VISIBLE
+                toolbar.title = ""
+            }
+        }
+        //mainMenu.findItem(R.id.menu_delete)?.isVisible = show
+    }
+
+    fun delete(){
+
     }
 }

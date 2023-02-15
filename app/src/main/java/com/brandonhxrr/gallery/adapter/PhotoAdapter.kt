@@ -4,26 +4,24 @@ import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.brandonhxrr.gallery.Photo
-import com.brandonhxrr.gallery.R
-import com.brandonhxrr.gallery.getImagesFromPage
-import com.brandonhxrr.gallery.selectable
+import com.brandonhxrr.gallery.*
 import com.bumptech.glide.RequestBuilder
 
 class PhotoAdapter(
     private val photoList: List<Photo>,
-    private val glide: RequestBuilder<Bitmap>
+    private val glide: RequestBuilder<Bitmap>,
+    private val showDeleteMenu: (Boolean, Number) -> Unit
 ) : RecyclerView.Adapter<PhotoViewHolder>() {
     private var pageNumber: Int = 1
     private val limitPage = (photoList.size / 100) + 1
     var dataList : List<Photo> = getImagesFromPage(pageNumber, photoList)
 
-    var isInSelectionMode: Boolean = false
-    var itemsList = mutableListOf<Photo>()
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        return PhotoViewHolder(layoutInflater.inflate(R.layout.photo, parent, false), this)
+        return PhotoViewHolder(layoutInflater.inflate(R.layout.photo, parent, false), this){ show, items ->
+            showDeleteMenu(show, items)
+
+        }
     }
 
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {

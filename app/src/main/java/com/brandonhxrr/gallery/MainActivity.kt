@@ -1,6 +1,8 @@
 package com.brandonhxrr.gallery
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
@@ -14,12 +16,11 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var bottomNavView: BottomNavigationView
+    private lateinit var mainMenu: Menu
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
-
-        val albums = albumes
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -71,5 +72,33 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowHomeEnabled(false)
 
         return navUp
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        mainMenu = menu!!
+        menuInflater.inflate(R.menu.menu_selectable, mainMenu)
+        showDeleteMenu(false)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.menu_delete -> {
+                delete()
+            }
+
+            R.id.menu_more -> {
+
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    fun showDeleteMenu(show: Boolean) {
+        mainMenu.findItem(R.id.menu_delete)?.isVisible = show
+    }
+
+    fun delete(){
+
     }
 }
