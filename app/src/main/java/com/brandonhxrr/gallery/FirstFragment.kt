@@ -1,12 +1,10 @@
 package com.brandonhxrr.gallery
 
-import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.*
 import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
