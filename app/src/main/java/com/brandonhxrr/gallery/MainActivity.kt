@@ -1,5 +1,6 @@
 package com.brandonhxrr.gallery
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -14,7 +15,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.FileProvider
-import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
@@ -23,8 +23,13 @@ import androidx.navigation.ui.navigateUp
 import androidx.recyclerview.widget.RecyclerView
 import com.brandonhxrr.gallery.adapter.PhotoAdapter
 import com.brandonhxrr.gallery.databinding.ActivityMainBinding
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textview.MaterialTextView
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 class MainActivity : AppCompatActivity() {
@@ -36,6 +41,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var deleteButton: ImageButton
     private lateinit var shareButton: ImageButton
+    private lateinit var intentSenderLauncher: ActivityResultLauncher<IntentSenderRequest>
+    private lateinit var myAdapter: PhotoAdapter
+    private var deletedImageUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -98,6 +106,50 @@ class MainActivity : AppCompatActivity() {
             intentShare.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uriList)
             startActivity(intentShare)
         }
+
+        intentSenderLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
+            if(it.resultCode == RESULT_OK) {
+                if(Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+                    lifecycleScope.launch {
+                        deletePhotoFromExternal(this@MainActivity, deletedImageUri ?: return@launch, intentSenderLauncher)
+                    }
+                }
+            } else {
+                Toast.makeText(this, "File couldn't be deleted", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        deleteButton.setOnClickListener {
+            MaterialAlertDialogBuilder(this)
+                .setTitle("Eliminar ${itemsList.size} archivos")
+                .setPositiveButton("Eliminar") { _, _ ->
+                    recyclerView = findViewById(R.id.gridRecyclerView)
+
+                    for (item in itemsList) {
+                        val currentFile = File(item.path)
+
+                        if (currentFile.delete()) {
+                            recyclerView.adapter?.notifyItemRemoved(item.position)
+                        } else if (deletePhotoFromExternal(
+                                this,
+                                getContentUri(this, currentFile)!!,
+                                intentSenderLauncher
+                            )
+                        ) {
+                            recyclerView.adapter?.notifyItemRemoved(item.position)
+                        } else {
+                            Toast.makeText(this, "File couldn't be deleted", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    }
+                    Toast.makeText(this, "Files deleted", Toast.LENGTH_SHORT).show()
+                    disableSelectable()
+                    updateAdapterData()
+                }
+                .setNegativeButton("Cancelar", DialogInterface.OnClickListener { dialog, _ ->
+                    dialog.dismiss()
+                }).show()
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -118,5 +170,41 @@ class MainActivity : AppCompatActivity() {
         selectable = false
         (recyclerView.adapter as PhotoAdapter).resetItemsSelected()
         recyclerView.adapter?.notifyDataSetChanged()
+    }
+
+    fun updateAdapterData(){
+        lifecycleScope.launch(Dispatchers.IO) {
+            val media = getAllImagesAndVideosSortedByRecent(this@MainActivity)
+            val glide = Glide.with(this@MainActivity)
+            val builder = glide.asBitmap()
+
+            withContext(Dispatchers.Main) {
+                myAdapter = PhotoAdapter(media, builder) { show, items ->
+                    showDeleteMenu(show, items)
+                }
+                recyclerView.swapAdapter(myAdapter, false)
+            }
+        }
+    }
+
+    private fun showDeleteMenu(show: Boolean, items: Number) {
+        when(show){
+            true -> {
+                toolbar.visibility = View.GONE
+                selectableToolbar.visibility = View.VISIBLE
+                findViewById<MaterialTextView>(R.id.text_items_num).text = items.toString()
+                findViewById<ImageButton>(R.id.btn_close).setOnClickListener {
+                    showDeleteMenu(false, 0)
+                    itemsList.clear()
+                    selectable = false
+                    myAdapter.resetItemsSelected()
+                    myAdapter.notifyDataSetChanged()
+                }
+            }
+            false -> {
+                toolbar.visibility = View.VISIBLE
+                selectableToolbar.visibility = View.GONE
+            }
+        }
     }
 }

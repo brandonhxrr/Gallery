@@ -1,14 +1,18 @@
 package com.brandonhxrr.gallery
 
 import android.annotation.SuppressLint
+import android.app.RecoverableSecurityException
 import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
+import android.content.IntentSender
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.provider.MediaStore.MediaColumns
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
 import java.io.File
 import java.util.*
 import kotlin.collections.HashMap
@@ -162,6 +166,31 @@ fun getContentUri(context: Context, file: File): Uri? {
             null
         }
     }
+}
+
+fun deletePhotoFromExternal(context: Context, photoUri: Uri, intentSenderLauncher: ActivityResultLauncher<IntentSenderRequest>): Boolean{
+    try {
+        context.contentResolver.delete(photoUri, null, null)
+        return true
+    } catch (e: SecurityException) {
+        val intentSender = when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+                MediaStore.createDeleteRequest(context.contentResolver, listOf(photoUri))
+            }
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+                val recoverableSecurityException = e as? RecoverableSecurityException
+                recoverableSecurityException?.userAction?.actionIntent?.intentSender
+            }
+            else -> null
+        }
+        intentSender?.let { sender ->
+            intentSenderLauncher.launch(
+                IntentSenderRequest.Builder(sender as IntentSender).build()
+            )
+            return true
+        }
+    }
+    return false
 }
 
 val projection = arrayOf(

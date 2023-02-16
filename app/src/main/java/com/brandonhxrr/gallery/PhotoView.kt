@@ -2,7 +2,6 @@ package com.brandonhxrr.gallery
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.RecoverableSecurityException
 import android.content.*
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -10,7 +9,6 @@ import android.graphics.drawable.InsetDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.util.TypedValue
 import android.view.MenuItem
@@ -45,7 +43,6 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
-
 
 class PhotoView : AppCompatActivity() {
 
@@ -145,7 +142,7 @@ class PhotoView : AppCompatActivity() {
             if(it.resultCode == RESULT_OK) {
                 if(Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
                     lifecycleScope.launch {
-                        deletePhotoFromExternal(deletedImageUri ?: return@launch)
+                        deletePhotoFromExternal(this@PhotoView, deletedImageUri ?: return@launch, intentSenderLauncher)
                     }
                 }
             } else {
@@ -191,7 +188,7 @@ class PhotoView : AppCompatActivity() {
                     R.id.menu_delete -> {
                         if(currentFile.delete()){
                             removeImageFromAdapter()
-                        }else if(deletePhotoFromExternal(getContentUri(this, currentFile)!!)) {
+                        }else if(deletePhotoFromExternal(this, getContentUri(this, currentFile)!!, intentSenderLauncher)) {
                            removeImageFromAdapter()
                         }else {
                             Toast.makeText(this, "File couldn't be deleted", Toast.LENGTH_SHORT).show()
@@ -395,7 +392,7 @@ class PhotoView : AppCompatActivity() {
         }
     }
 
-    private fun deletePhotoFromExternal(photoUri: Uri): Boolean{
+    /*private fun deletePhotoFromExternal(photoUri: Uri): Boolean{
         try {
             contentResolver.delete(photoUri, null, null)
             return true
@@ -418,5 +415,5 @@ class PhotoView : AppCompatActivity() {
             }
         }
         return false
-    }
+    }*/
 }
