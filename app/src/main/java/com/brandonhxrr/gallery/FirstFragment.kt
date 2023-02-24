@@ -1,11 +1,16 @@
 package com.brandonhxrr.gallery
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.ImageButton
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -19,6 +24,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.*
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 
 class FirstFragment : Fragment() {
 
@@ -29,6 +37,7 @@ class FirstFragment : Fragment() {
     private var visibleItemCount = 0
     private var totalItemCount = 0
     private var loading = true
+    private lateinit var operation: String
     private lateinit var builder: RequestBuilder<Bitmap>
     private lateinit var myAdapter: PhotoAdapter
     private lateinit var recyclerView: RecyclerView
@@ -117,10 +126,16 @@ class FirstFragment : Fragment() {
             when(menuItem.itemId){
                 R.id.menu_copy -> {
                     Toast.makeText(requireContext(), "COPY", Toast.LENGTH_SHORT).show()
+                    val selectionIntent = Intent(requireContext(), AlbumSelection::class.java)
+                    resultLauncher.launch(selectionIntent)
+                    operation = "COPY"
                     true
                 }
                 R.id.menu_move -> {
                     Toast.makeText(requireContext(), "MOVE", Toast.LENGTH_SHORT).show()
+                    val selectionIntent = Intent(requireContext(), AlbumSelection::class.java)
+                    resultLauncher.launch(selectionIntent)
+                    operation = "MOVE"
                     true
                 }
                 else -> false
@@ -160,4 +175,25 @@ class FirstFragment : Fragment() {
             }
         }
     }
+
+    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data: Intent? = result.data
+            val ruta: String = data?.getStringExtra("RUTA")!!
+
+            val dest = File(ruta)
+            val uri = Uri.fromFile(dest)
+            Log.d("COPY100: URI", uri.toString())
+
+            when(operation) {
+                "MOVE" -> {
+                    //copyFilesToSD(ruta, currentFile, true)
+                }
+                "COPY" -> {
+                    //copyFilesToSD(ruta, currentFile, false)
+                }
+            }
+        }
+    }
+
 }

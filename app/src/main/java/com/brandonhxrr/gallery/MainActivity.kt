@@ -172,7 +172,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter?.notifyDataSetChanged()
     }
 
-    fun updateAdapterData(){
+    private fun updateAdapterData(){
         lifecycleScope.launch(Dispatchers.IO) {
             val media = getAllImagesAndVideosSortedByRecent(this@MainActivity)
             val glide = Glide.with(this@MainActivity)

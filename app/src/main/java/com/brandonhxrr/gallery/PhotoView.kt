@@ -9,7 +9,6 @@ import android.graphics.drawable.InsetDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
@@ -38,9 +37,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
+import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -63,6 +60,9 @@ class PhotoView : AppCompatActivity() {
     private lateinit var currentFile: File
     private var deletedImageUri: Uri? = null
     private lateinit var intentSenderLauncher: ActivityResultLauncher<IntentSenderRequest>
+    private val PERMISSION_PREFS_NAME = "permissions"
+    private val SD_CARD_PERMISSION_GRANTED_KEY = "sd_card_permission_granted"
+    private lateinit var destinationPath: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,7 +94,6 @@ class PhotoView : AppCompatActivity() {
         supportActionBar?.title = ""
 
         val bundle = intent.extras
-        val path = bundle?.getString("path")
         position = bundle?.getInt("position")!!
         val gson = Gson()
         val data = intent.getStringExtra("data")
@@ -106,7 +105,7 @@ class PhotoView : AppCompatActivity() {
         viewPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener(){
             override fun onPageSelected(pos: Int) {
                 super.onPageSelected(pos)
-                setDateTime(pos)
+                setDateTime()
                 position = pos
                 currentFile = File(media!![position].path)
             }
@@ -114,7 +113,7 @@ class PhotoView : AppCompatActivity() {
 
         viewPagerAdapter = ViewPagerAdapter(this, media!!)
         viewPager.adapter = viewPagerAdapter
-        setDateTime(position)
+        setDateTime()
         viewPager.currentItem = position
 
         toolbar.visibility = View.GONE
@@ -212,13 +211,14 @@ class PhotoView : AppCompatActivity() {
             viewPager.invalidate()
             viewPager.currentItem = position
             currentFile = File(media!![position].path)
-            setDateTime(position)
+            setDateTime()
 
             Toast.makeText(this, "File deleted successfully", Toast.LENGTH_SHORT).show()
         }else {
             onBackPressedDispatcher.onBackPressed()
         }
     }
+
     private fun showSubmenu(v: View, @MenuRes menuRes: Int) {
         val popup = PopupMenu(this, v)
         popup.menuInflater.inflate(menuRes, popup.menu)
@@ -247,9 +247,9 @@ class PhotoView : AppCompatActivity() {
                                 + "\nTamaño: " + fileSizeString
                                 + "\nResolución: " + getResolution(currentFile.path)
                                 + "\nFecha: " + dateFormat.format(Date(lastModified)))
-                        .setPositiveButton("Aceptar", DialogInterface.OnClickListener { dialog, _ ->
+                        .setPositiveButton("Aceptar") { dialog, _ ->
                             dialog.dismiss()
-                        })
+                        }
                         .show()
                 }
                 R.id.menu_move -> {
@@ -258,8 +258,14 @@ class PhotoView : AppCompatActivity() {
                     operation = "MOVE"
                 }
                 R.id.menu_copy -> {
-                    val selectionIntent = Intent(this, AlbumSelection::class.java)
-                    resultLauncher.launch(selectionIntent)
+
+                    val mimeType: String = if (currentFile.extension in imageExtensions) "image/${currentFile.extension}" else "video/${currentFile.extension}"
+
+                    val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
+                        .setType(mimeType)
+                        .addCategory(Intent.CATEGORY_OPENABLE)
+                        .setComponent(ComponentName(this, AlbumSelection::class.java))
+                    resultLauncher.launch(intent)
                     operation = "COPY"
                 }
                 R.id.menu_rename -> {
@@ -299,18 +305,14 @@ class PhotoView : AppCompatActivity() {
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val data: Intent? = result.data
-            val ruta: String = data?.getStringExtra("RUTA")!!
-
-            val dest = File(ruta)
-            val uri = Uri.fromFile(dest)
-            Log.d("COPY100: URI", uri.toString())
+            destinationPath = data?.getStringExtra("RUTA")!!
 
             when(operation) {
                 "MOVE" -> {
-                    copyFilesToSD(ruta, currentFile, true)
+                    copyFileToUri(this, currentFile, destinationPath, true, requestPermissionLauncher, intentSenderLauncher)
                 }
                 "COPY" -> {
-                    copyFilesToSD(ruta, currentFile, false)
+                    copyFileToUri(this, currentFile, destinationPath, false, requestPermissionLauncher, intentSenderLauncher)
                 }
             }
         }
@@ -324,31 +326,7 @@ class PhotoView : AppCompatActivity() {
         return options.outWidth.toString() + "x" + options.outHeight.toString()
     }
 
-    /*fun copyFileToMediaStore(destinationUri: Uri, file: File) {
-        Log.d("COPY100: MOUNTED", Environment.getExternalStorageState())
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            Log.d("COPY100: lEGACY", Environment.isExternalStorageLegacy().toString())
-        }
-        val resolver = contentResolver
-        val values = ContentValues().apply {
-            put(MediaStore.Images.Media.DISPLAY_NAME, file.name)
-            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-            put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/")
-        }
-        val collection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-        val uri = resolver.insert(collection, values)
-        Log.d("COPY 100: MEDIAURI", uri.toString())
-        val inputStream = FileInputStream(file)
-        val outputStream = resolver.openOutputStream(uri!!)
-        inputStream.use { input ->
-            outputStream?.use { output ->
-                input.copyTo(output)
-            }
-        }
-    }*/
-
-
-    private fun setDateTime(position : Int) {
+    private fun setDateTime() {
         val date = Date(currentFile.lastModified())
         val inputFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy", Locale.getDefault())
         val outputFormatDate = SimpleDateFormat("dd 'de' MMMM 'de' yyyy", Locale.getDefault())
@@ -369,51 +347,20 @@ class PhotoView : AppCompatActivity() {
         } else 0
     }
 
-    private fun copyFilesToSD(ruta: String, file: File, moveFile: Boolean){
-        val filePath = "$ruta/${file.name}"
+    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val uri: Uri? = result.data?.data
+            if (uri != null) {
+                val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                contentResolver.takePersistableUriPermission(uri, takeFlags)
 
-        val newFile = File(filePath)
-        try {
-            val inputStream = FileInputStream(file)
-            val outputStream = FileOutputStream(newFile)
-            inputStream.copyTo(outputStream)
-            inputStream.close()
-            outputStream.close()
-            if(moveFile) {
-                file.delete()
-                Toast.makeText(this, "File moved successfully", Toast.LENGTH_SHORT).show()
-            }else {
-                Toast.makeText(this, "File copied successfully", Toast.LENGTH_SHORT).show()
+                val sharedPreferences = getSharedPreferences(PERMISSION_PREFS_NAME, Context.MODE_PRIVATE)
+                val editor = sharedPreferences.edit()
+                editor.putBoolean(SD_CARD_PERMISSION_GRANTED_KEY, true)
+                editor.apply()
+                copyToExternal(this, currentFile, destinationPath, operation == "MOVE", intentSenderLauncher)
             }
-
-        } catch (e: Exception) {
-            Toast.makeText(this, "Error copying file", Toast.LENGTH_SHORT).show()
-            Log.e("Error", "Error copying file", e)
         }
     }
-
-    /*private fun deletePhotoFromExternal(photoUri: Uri): Boolean{
-        try {
-            contentResolver.delete(photoUri, null, null)
-            return true
-        } catch (e: SecurityException) {
-            val intentSender = when {
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
-                    MediaStore.createDeleteRequest(contentResolver, listOf(photoUri))
-                }
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
-                    val recoverableSecurityException = e as? RecoverableSecurityException
-                    recoverableSecurityException?.userAction?.actionIntent?.intentSender
-                }
-                else -> null
-            }
-            intentSender?.let { sender ->
-                intentSenderLauncher.launch(
-                    IntentSenderRequest.Builder(sender as IntentSender).build()
-                )
-                return true
-            }
-        }
-        return false
-    }*/
 }

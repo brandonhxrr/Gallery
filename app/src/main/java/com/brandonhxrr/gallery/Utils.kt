@@ -2,20 +2,16 @@ package com.brandonhxrr.gallery
 
 import android.annotation.SuppressLint
 import android.app.RecoverableSecurityException
-import android.content.ContentResolver
-import android.content.ContentValues
-import android.content.Context
-import android.content.IntentSender
+import android.content.*
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.provider.MediaStore.MediaColumns
+import android.provider.MediaStore.MediaColumns.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import java.io.File
 import java.util.*
-import kotlin.collections.HashMap
 
 val imageExtensions = arrayOf("jpg", "jpeg", "png", "gif", "bmp", "webp")
 val videoExtensions = arrayOf("mp4", "mkv", "avi", "wmv", "mov")
@@ -94,7 +90,7 @@ private fun Cursor.getResultsFromCursor(): List<File> {
     val results = mutableListOf<File>()
 
     while (this.moveToNext()) {
-        results.add(File(this.getString(this.getColumnIndexOrThrow(MediaColumns.DATA))))
+        results.add(File(this.getString(this.getColumnIndexOrThrow(DATA))))
     }
     return results
 }
@@ -119,7 +115,7 @@ fun getImageVideoNumber(parent : File) : Int{
 @SuppressLint("Range")
 fun getContentUri(context: Context, file: File): Uri? {
     val filePath = file.absolutePath
-    var mimeType = ""
+    val mimeType: String
     val contentUri: Uri
     val contentValues = ContentValues()
 
@@ -136,12 +132,12 @@ fun getContentUri(context: Context, file: File): Uri? {
     }
 
     val cursor: Cursor = context.contentResolver.query(
-        contentUri, arrayOf(MediaColumns._ID),
-        "${MediaColumns.DATA} =? ", arrayOf(filePath), null
+        contentUri, arrayOf(_ID),
+        "$DATA =? ", arrayOf(filePath), null
     )!!
 
     return if (cursor.moveToFirst()) {
-        val id: Int = cursor.getInt(cursor.getColumnIndex(MediaColumns._ID))
+        val id: Int = cursor.getInt(cursor.getColumnIndex(_ID))
         cursor.close()
         Uri.withAppendedPath(contentUri, "" + id)
     } else {
@@ -159,7 +155,7 @@ fun getContentUri(context: Context, file: File): Uri? {
                 resolver.update(contentCollection, contentValues, null, null)
                 finalUri
             } else {
-                contentValues.put(MediaColumns.DATA, filePath)
+                contentValues.put(DATA, filePath)
                 context.contentResolver.insert(contentUri, contentValues)
             }
         } else {
