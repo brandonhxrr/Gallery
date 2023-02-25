@@ -129,7 +129,7 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    fun disableSelectable(){
+    private fun disableSelectable(){
         recyclerView = findViewById(R.id.gridRecyclerView)
         selectableToolbar.visibility = View.GONE
         toolbar.visibility = View.VISIBLE

@@ -106,34 +106,29 @@ class ViewAlbum : Fragment() {
                 .setPositiveButton("Eliminar") { _, _ ->
 
                     for (item in itemsList) {
-                        try{
-                            val currentFile = File(item.path)
+                        val currentFile = File(item.path)
 
-                            if (currentFile.delete()) {
-                                recyclerView.adapter?.notifyItemRemoved(item.position)
-                            } else if (deletePhotoFromExternal(
-                                    requireContext(),
-                                    getContentUri(requireContext(), currentFile)!!,
-                                    intentSenderLauncher
-                                )
-                            ) {
-                                recyclerView.adapter?.notifyItemRemoved(item.position)
-                            } else {
-                                Toast.makeText(requireContext(), "File couldn't be deleted", Toast.LENGTH_SHORT)
-                                    .show()
-                            }
-                        }catch (e: java.lang.Exception){
-                            Log.d("COPY100: ", e.message.toString())
-
+                        if (currentFile.delete()) {
+                            recyclerView.adapter?.notifyItemRemoved(item.position)
+                        } else if (deletePhotoFromExternal(
+                                requireContext(),
+                                getContentUri(requireContext(), currentFile)!!,
+                                intentSenderLauncher
+                            )
+                        ) {
+                            recyclerView.adapter?.notifyItemRemoved(item.position)
+                        } else {
+                            Toast.makeText(requireContext(), "File couldn't be deleted", Toast.LENGTH_SHORT)
+                                .show()
                         }
                     }
                     Toast.makeText(requireContext(), "Files deleted", Toast.LENGTH_SHORT).show()
                     disableSelectable()
                     updateAdapterData()
                 }
-                .setNegativeButton("Cancelar", DialogInterface.OnClickListener { dialog, _ ->
+                .setNegativeButton("Cancelar") { dialog, _ ->
                     dialog.dismiss()
-                }).show()
+                }.show()
         }
 
         return binding.root
@@ -374,6 +369,7 @@ class ViewAlbum : Fragment() {
     }
 
     private fun disableSelectable(){
+        recyclerView = (context as Activity).findViewById(R.id.gridRecyclerView)
         selectableToolbar.visibility = View.GONE
         toolbar.visibility = View.VISIBLE
         itemsList.clear()
@@ -383,29 +379,26 @@ class ViewAlbum : Fragment() {
     }
 
     private fun updateAdapterData(){
-        lifecycleScope.launch(Dispatchers.IO) {
-            val media = getImagesFromAlbum(album.path)
 
-            if(media.isNotEmpty()){
-                (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).text =
-                    "${album.name} (${album.itemsNumber})"
-            }else {
-                albumes?.remove(File(album.path))
-                (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).text =
-                    "${album.name} (0)"
-                txtAlbumEmpty.visibility = View.VISIBLE
-            }
+        val media = getImagesFromAlbum(album.path)
 
-            val glide = Glide.with(requireContext())
-            val builder = glide.asBitmap()
-
-            withContext(Dispatchers.Main) {
-                myAdapter = PhotoAdapter(media, builder) { show, items ->
-                    showDeleteMenu(show, items)
-                }
-                recyclerView.swapAdapter(myAdapter, false)
-            }
+        if(media.isNotEmpty()){
+            (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).text =
+                "${album.name} (${album.itemsNumber})"
+        }else {
+            albumes?.remove(File(album.path))
+            (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).text =
+                "${album.name} (0)"
+            txtAlbumEmpty.visibility = View.VISIBLE
         }
+
+        val glide = Glide.with(requireContext())
+        val builder = glide.asBitmap()
+
+        myAdapter = PhotoAdapter(media, builder) { show, items ->
+            showDeleteMenu(show, items)
+        }
+        recyclerView.swapAdapter(myAdapter, false)
     }
 
 }
