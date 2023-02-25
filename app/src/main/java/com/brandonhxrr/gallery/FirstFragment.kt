@@ -10,6 +10,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.ImageButton
+import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
@@ -25,6 +27,9 @@ import com.brandonhxrr.gallery.adapter.PhotoAdapter
 import com.brandonhxrr.gallery.databinding.FragmentFirstBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.*
 import java.io.File
@@ -202,24 +207,61 @@ class FirstFragment : Fragment() {
             val data: Intent? = result.data
             destinationPath = data?.getStringExtra("RUTA")!!
 
-            val dest = File(destinationPath)
-            val uri = Uri.fromFile(dest)
-            Log.d("COPY100: URI", uri.toString())
+            val view = layoutInflater.inflate(R.layout.alert_progress, null)
+            val progressBar = view.findViewById<ProgressBar>(R.id.progressbar)
+            val progressText = view.findViewById<TextView>(R.id.text_progress)
+            progressBar.max = itemsList.size
+            progressBar.progress = 0
+
+            val alertProgress = MaterialAlertDialogBuilder(requireContext())
+            alertProgress.setCancelable(false)
+            alertProgress.setView(view)
+
+            var currentOperation = 0
 
             when(operation) {
                 "MOVE" -> {
-                    for(item in itemsList){
-                        currentFile = File(item.path)
-                        copyFileToUri(requireContext(), currentFile, destinationPath, true, requestPermissionLauncher, intentSenderLauncher)
+                    alertProgress.setTitle("Moviendo archivos")
+                    val alertShow = alertProgress.show()
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        for (item in itemsList) {
+                            currentFile = File(item.path)
+                            copyFileToUri(requireContext(), currentFile, destinationPath, true, requestPermissionLauncher, intentSenderLauncher)
+                            currentOperation++
+
+                            withContext(Dispatchers.Main) {
+                                progressBar.progress = currentOperation
+                                progressText.text = "$currentOperation/${itemsList.size}"
+                            }
+                        }
+                        withContext(Dispatchers.Main) {
+                            alertShow.dismiss()
+                            Toast.makeText(context, "Files moved successfully", Toast.LENGTH_SHORT).show()
+                            showDeleteMenu(false, 0)
+                        }
                     }
-                    showDeleteMenu(false, 0)
+
                 }
                 "COPY" -> {
-                    for(item in itemsList){
-                        currentFile = File(item.path)
-                        copyFileToUri(requireContext(), currentFile, destinationPath, false, requestPermissionLauncher, intentSenderLauncher)
+                    alertProgress.setTitle("Copiando archivos")
+                    val alertShow = alertProgress.show()
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        for (item in itemsList) {
+                            currentFile = File(item.path)
+                            copyFileToUri(requireContext(), currentFile, destinationPath, false, requestPermissionLauncher, intentSenderLauncher)
+                            currentOperation++
+
+                            withContext(Dispatchers.Main) {
+                                progressBar.progress = currentOperation
+                                progressText.text = "$currentOperation/${itemsList.size}"
+                            }
+                        }
+                        withContext(Dispatchers.Main) {
+                            alertShow.dismiss()
+                            Toast.makeText(context, "Files copied successfully", Toast.LENGTH_SHORT).show()
+                            showDeleteMenu(false, 0)
+                        }
                     }
-                    showDeleteMenu(false, 0)
                 }
             }
         }

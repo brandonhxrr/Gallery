@@ -81,8 +81,6 @@ fun copyToExternal(context: Context, fileToCopy: File, destinationPath: String, 
     if(moveFile) {
         deletePhotoFromExternal(context, getContentUri(context, fileToCopy)!!, intentSenderLauncher)
         Toast.makeText(context, "File moved successfully", Toast.LENGTH_SHORT).show()
-    }else{
-        Toast.makeText(context, "File copied successfully", Toast.LENGTH_SHORT).show()
     }
 }
 
