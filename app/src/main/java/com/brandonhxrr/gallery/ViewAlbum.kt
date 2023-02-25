@@ -1,13 +1,21 @@
 package com.brandonhxrr.gallery
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.lifecycleScope
@@ -35,13 +43,17 @@ class ViewAlbum : Fragment() {
     private var visibleItemCount = 0
     private var totalItemCount = 0
     private var loading = true
-
     private lateinit var builder: RequestBuilder<Bitmap>
     private lateinit var myAdapter: PhotoAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var media: List<Photo>
     private lateinit var txtAlbumEmpty: MaterialTextView
     private lateinit var selectableToolbar: Toolbar
+    private lateinit var intentSenderLauncher: ActivityResultLauncher<IntentSenderRequest>
+    private lateinit var currentFile: File
+    private lateinit var destinationPath: String
+    private var deletedImageUri: Uri? = null
+    private lateinit var operation: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,6 +85,19 @@ class ViewAlbum : Fragment() {
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(true)
         (activity as AppCompatActivity).supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back)
         (activity as AppCompatActivity).supportActionBar?.title = ""
+
+        intentSenderLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
+            if(it.resultCode == AppCompatActivity.RESULT_OK) {
+                if(Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+                    lifecycleScope.launch {
+                        deletePhotoFromExternal(requireContext(), deletedImageUri ?: return@launch, intentSenderLauncher)
+                    }
+                }
+            } else {
+                Toast.makeText(requireContext(), "File couldn't be deleted", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         return binding.root
     }
 
@@ -152,11 +177,15 @@ class ViewAlbum : Fragment() {
         selectableToolbar.setOnMenuItemClickListener {menuItem ->
             when(menuItem.itemId){
                 R.id.menu_copy -> {
-                    Toast.makeText(requireContext(), "COPY", Toast.LENGTH_SHORT).show()
+                    val selectionIntent = Intent(requireContext(), AlbumSelection::class.java)
+                    resultLauncher.launch(selectionIntent)
+                    operation = "COPY"
                     true
                 }
                 R.id.menu_move -> {
-                    Toast.makeText(requireContext(), "MOVE", Toast.LENGTH_SHORT).show()
+                    val selectionIntent = Intent(requireContext(), AlbumSelection::class.java)
+                    resultLauncher.launch(selectionIntent)
+                    operation = "MOVE"
                     true
                 }
                 R.id.menu_select_all -> {
@@ -209,7 +238,57 @@ class ViewAlbum : Fragment() {
             false -> {
                 toolbar.visibility = View.VISIBLE
                 selectableToolbar.visibility = View.GONE
+                itemsList.clear()
+                selectable = false
+                myAdapter.resetItemsSelected()
+                myAdapter.notifyDataSetChanged()
             }
         }
     }
+
+    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data: Intent? = result.data
+            destinationPath = data?.getStringExtra("RUTA")!!
+
+            val dest = File(destinationPath)
+            val uri = Uri.fromFile(dest)
+            Log.d("COPY100: URI", uri.toString())
+
+            when(operation) {
+                "MOVE" -> {
+                    for(item in itemsList){
+                        currentFile = File(item.path)
+                        copyFileToUri(requireContext(), currentFile, destinationPath, true, requestPermissionLauncher, intentSenderLauncher)
+                    }
+                    showDeleteMenu(false, 0)
+                }
+                "COPY" -> {
+                    for(item in itemsList){
+                        currentFile = File(item.path)
+                        copyFileToUri(requireContext(), currentFile, destinationPath, false, requestPermissionLauncher, intentSenderLauncher)
+                    }
+                    showDeleteMenu(false, 0)
+                }
+            }
+        }
+    }
+
+    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val uri: Uri? = result.data?.data
+            if (uri != null) {
+                val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                requireContext().contentResolver.takePersistableUriPermission(uri, takeFlags)
+
+                val sharedPreferences = requireContext().getSharedPreferences(PERMISSION_PREFS_NAME, Context.MODE_PRIVATE)
+                val editor = sharedPreferences.edit()
+                editor.putBoolean(SD_CARD_PERMISSION_GRANTED_KEY, true)
+                editor.apply()
+                copyToExternal(requireContext(), currentFile, destinationPath, operation == "MOVE", intentSenderLauncher)
+            }
+        }
+    }
+
 }

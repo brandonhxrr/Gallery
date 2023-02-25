@@ -15,8 +15,8 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
-private val PERMISSION_PREFS_NAME = "permissions"
-private val SD_CARD_PERMISSION_GRANTED_KEY = "sd_card_permission_granted"
+val PERMISSION_PREFS_NAME = "permissions"
+val SD_CARD_PERMISSION_GRANTED_KEY = "sd_card_permission_granted"
 
 fun copyFileToUri(context: Context, fileToCopy: File, destinationPath: String, moveFile: Boolean, requestPermissionLauncher: ActivityResultLauncher<Intent>, intentSenderLauncher: ActivityResultLauncher<IntentSenderRequest>) {
     try{
@@ -31,9 +31,6 @@ fun copyFileToUri(context: Context, fileToCopy: File, destinationPath: String, m
 
         if(moveFile) {
             deletePhotoFromExternal(context, getContentUri(context, fileToCopy)!!, intentSenderLauncher)
-            Toast.makeText(context, "File moved successfully", Toast.LENGTH_SHORT).show()
-        }else{
-            Toast.makeText(context, "File copied successfully", Toast.LENGTH_SHORT).show()
         }
 
     }catch (e: Exception){
