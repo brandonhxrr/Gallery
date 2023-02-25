@@ -106,20 +106,25 @@ class ViewAlbum : Fragment() {
                 .setPositiveButton("Eliminar") { _, _ ->
 
                     for (item in itemsList) {
-                        val currentFile = File(item.path)
+                        try{
+                            val currentFile = File(item.path)
 
-                        if (currentFile.delete()) {
-                            recyclerView.adapter?.notifyItemRemoved(item.position)
-                        } else if (deletePhotoFromExternal(
-                                requireContext(),
-                                getContentUri(requireContext(), currentFile)!!,
-                                intentSenderLauncher
-                            )
-                        ) {
-                            recyclerView.adapter?.notifyItemRemoved(item.position)
-                        } else {
-                            Toast.makeText(requireContext(), "File couldn't be deleted", Toast.LENGTH_SHORT)
-                                .show()
+                            if (currentFile.delete()) {
+                                recyclerView.adapter?.notifyItemRemoved(item.position)
+                            } else if (deletePhotoFromExternal(
+                                    requireContext(),
+                                    getContentUri(requireContext(), currentFile)!!,
+                                    intentSenderLauncher
+                                )
+                            ) {
+                                recyclerView.adapter?.notifyItemRemoved(item.position)
+                            } else {
+                                Toast.makeText(requireContext(), "File couldn't be deleted", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }catch (e: java.lang.Exception){
+                            Log.d("COPY100: ", e.message.toString())
+
                         }
                     }
                     Toast.makeText(requireContext(), "Files deleted", Toast.LENGTH_SHORT).show()
@@ -254,7 +259,7 @@ class ViewAlbum : Fragment() {
         }
     }
 
-    private fun showDeleteMenu(show: Boolean, items: Number) {
+    private fun showDeleteMenu(show: Boolean, items: Number = 0) {
         when(show){
             true -> {
                 toolbar.visibility = View.GONE
@@ -300,47 +305,54 @@ class ViewAlbum : Fragment() {
                 "MOVE" -> {
                     alertProgress.setTitle("Moviendo archivos")
                     val alertShow = alertProgress.show()
-                    lifecycleScope.launch(Dispatchers.IO) {
+                    lifecycleScope.launch(Dispatchers.Main) {
                         for (item in itemsList) {
-                            currentFile = File(item.path)
-                            copyFileToUri(requireContext(), currentFile, destinationPath, true, requestPermissionLauncher, intentSenderLauncher)
-                            currentOperation++
+                                try{
+                                    currentFile = File(item.path)
+                                    progressBar.progress = currentOperation
+                                    progressText.text = "$currentOperation/${itemsList.size}"
+                                    currentOperation++
 
-                            withContext(Dispatchers.Main) {
-                                progressBar.progress = currentOperation
-                                progressText.text = "$currentOperation/${itemsList.size}"
-                            }
+                                    withContext(Dispatchers.IO) {
+                                        copyFileToUri(requireContext(), currentFile, destinationPath, true, requestPermissionLauncher, intentSenderLauncher)
+                                    }
+                                }catch(e: Exception){
+                                    Log.e("COPY_ERROR", "Error moving file: ${e.message}")
+                                }
                         }
-                        withContext(Dispatchers.Main) {
-                            alertShow.dismiss()
-                            Toast.makeText(context, "Files moved successfully", Toast.LENGTH_SHORT).show()
-                            showDeleteMenu(false, 0)
-                        }
+                        alertShow.dismiss()
+                        Toast.makeText(context, "Files moved successfully", Toast.LENGTH_SHORT).show()
+                        showDeleteMenu(false)
+                        updateAdapterData()
                     }
-
                 }
                 "COPY" -> {
                     alertProgress.setTitle("Copiando archivos")
                     val alertShow = alertProgress.show()
-                    lifecycleScope.launch(Dispatchers.IO) {
+                    lifecycleScope.launch(Dispatchers.Main) {
                         for (item in itemsList) {
-                            currentFile = File(item.path)
-                            copyFileToUri(requireContext(), currentFile, destinationPath, false, requestPermissionLauncher, intentSenderLauncher)
-                            currentOperation++
-
-                            withContext(Dispatchers.Main) {
+                            try{
+                                currentFile = File(item.path)
                                 progressBar.progress = currentOperation
                                 progressText.text = "$currentOperation/${itemsList.size}"
+                                currentOperation++
+
+                                withContext(Dispatchers.IO) {
+                                    copyFileToUri(requireContext(), currentFile, destinationPath, false, requestPermissionLauncher, intentSenderLauncher)
+                                }
+                            }catch(e: Exception){
+                                Log.e("COPY_ERROR", "Error copying file: ${e.message}")
                             }
+
                         }
-                        withContext(Dispatchers.Main) {
-                            alertShow.dismiss()
-                            Toast.makeText(context, "Files copied successfully", Toast.LENGTH_SHORT).show()
-                            showDeleteMenu(false, 0)
-                        }
+                        alertShow.dismiss()
+                        Toast.makeText(context, "Files copied successfully", Toast.LENGTH_SHORT).show()
+                        showDeleteMenu(false)
+                        updateAdapterData()
                     }
                 }
             }
+
         }
     }
 
@@ -377,21 +389,21 @@ class ViewAlbum : Fragment() {
             if(media.isNotEmpty()){
                 (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).text =
                     "${album.name} (${album.itemsNumber})"
-
-                val glide = Glide.with(requireContext())
-                val builder = glide.asBitmap()
-
-                withContext(Dispatchers.Main) {
-                    myAdapter = PhotoAdapter(media, builder) { show, items ->
-                        showDeleteMenu(show, items)
-                    }
-                    recyclerView.swapAdapter(myAdapter, false)
-                }
             }else {
                 albumes?.remove(File(album.path))
                 (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).text =
                     "${album.name} (0)"
                 txtAlbumEmpty.visibility = View.VISIBLE
+            }
+
+            val glide = Glide.with(requireContext())
+            val builder = glide.asBitmap()
+
+            withContext(Dispatchers.Main) {
+                myAdapter = PhotoAdapter(media, builder) { show, items ->
+                    showDeleteMenu(show, items)
+                }
+                recyclerView.swapAdapter(myAdapter, false)
             }
         }
     }
