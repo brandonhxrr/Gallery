@@ -2,6 +2,7 @@ package com.brandonhxrr.gallery
 
 import android.app.Activity
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -56,6 +57,7 @@ class FirstFragment : Fragment() {
     private lateinit var intentSenderLauncher: ActivityResultLauncher<IntentSenderRequest>
     private lateinit var currentFile: File
     private lateinit var destinationPath: String
+    private lateinit var deleteButton: ImageButton
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -145,6 +147,7 @@ class FirstFragment : Fragment() {
     override fun onResume() {
         toolbar = (activity as AppCompatActivity).findViewById(R.id.toolbar)
         selectableToolbar = (activity as AppCompatActivity).findViewById(R.id.selectable_toolbar)
+        deleteButton = selectableToolbar.findViewById(R.id.btn_delete)
         selectableToolbar.inflateMenu(R.menu.menu_selectable)
         selectableToolbar.setOnMenuItemClickListener {menuItem ->
             when(menuItem.itemId){
@@ -162,6 +165,37 @@ class FirstFragment : Fragment() {
                 }
                 else -> false
             }
+        }
+
+        deleteButton.setOnClickListener {
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Eliminar ${itemsList.size} archivos")
+                .setPositiveButton("Eliminar") { _, _ ->
+
+                    for (item in itemsList) {
+                        val currentFile = File(item.path)
+
+                        if (currentFile.delete()) {
+                            recyclerView.adapter?.notifyItemRemoved(item.position)
+                        } else if (deletePhotoFromExternal(
+                                requireContext(),
+                                getContentUri(requireContext(), currentFile)!!,
+                                intentSenderLauncher
+                            )
+                        ) {
+                            recyclerView.adapter?.notifyItemRemoved(item.position)
+                        } else {
+                            Toast.makeText(requireContext(), "File couldn't be deleted", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    }
+                    Toast.makeText(requireContext(), "Files deleted", Toast.LENGTH_SHORT).show()
+                    disableSelectable()
+                    updateAdapterData()
+                }
+                .setNegativeButton("Cancelar", DialogInterface.OnClickListener { dialog, _ ->
+                    dialog.dismiss()
+                }).show()
         }
 
         super.onResume()
@@ -280,6 +314,30 @@ class FirstFragment : Fragment() {
                 editor.putBoolean(SD_CARD_PERMISSION_GRANTED_KEY, true)
                 editor.apply()
                 copyToExternal(requireContext(), currentFile, destinationPath, operation == "MOVE", intentSenderLauncher)
+            }
+        }
+    }
+
+    private fun disableSelectable(){
+        selectableToolbar.visibility = View.GONE
+        toolbar.visibility = View.VISIBLE
+        itemsList.clear()
+        selectable = false
+        (recyclerView.adapter as PhotoAdapter).resetItemsSelected()
+        recyclerView.adapter?.notifyDataSetChanged()
+    }
+
+    private fun updateAdapterData(){
+        lifecycleScope.launch(Dispatchers.IO) {
+            val media = getAllImagesAndVideosSortedByRecent(requireContext())
+            val glide = Glide.with(requireContext())
+            val builder = glide.asBitmap()
+
+            withContext(Dispatchers.Main) {
+                myAdapter = PhotoAdapter(media, builder) { show, items ->
+                    showDeleteMenu(show, items)
+                }
+                recyclerView.swapAdapter(myAdapter, false)
             }
         }
     }
