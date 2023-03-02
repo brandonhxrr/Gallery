@@ -43,7 +43,9 @@ class PhotoAdapter(
 
     fun setSelectedItem(position: Int){
         dataList[position].selected = true
-        itemsList.add(dataList[position])
+        if(!itemsList.contains(dataList[position])){
+            itemsList.add(dataList[position])
+        }
     }
 
     fun resetItemsSelected() {

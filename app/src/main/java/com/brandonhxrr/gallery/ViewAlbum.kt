@@ -2,7 +2,6 @@ package com.brandonhxrr.gallery
 
 import android.app.Activity
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -55,6 +54,8 @@ class ViewAlbum : Fragment() {
     private var deletedImageUri: Uri? = null
     private lateinit var operation: String
     private lateinit var deleteButton: ImageButton
+    private lateinit var txtItemsNum: TextView
+    private lateinit var textAppbar: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,6 +81,9 @@ class ViewAlbum : Fragment() {
         selectableToolbar = (activity as AppCompatActivity).findViewById(R.id.selectable_toolbar)
         txtAlbumEmpty = (activity as AppCompatActivity).findViewById(R.id.album_empty)
         deleteButton = selectableToolbar.findViewById(R.id.btn_delete)
+        txtItemsNum = selectableToolbar.findViewById(R.id.text_items_num)
+        textAppbar = (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar)
+
 
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
 
@@ -131,12 +135,17 @@ class ViewAlbum : Fragment() {
                 }.show()
         }
 
+        txtItemsNum.setOnClickListener {
+            myAdapter.selectAllItems()
+            myAdapter.notifyDataSetChanged()
+        }
+
         return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).text = getString(R.string.app_name)
+        textAppbar.text = getString(R.string.app_name)
         (activity as AppCompatActivity).findViewById<ImageView>(R.id.app_logo).visibility = View.VISIBLE
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(false)
@@ -242,11 +251,11 @@ class ViewAlbum : Fragment() {
                 recyclerView.swapAdapter(myAdapter, false)
 
                 if(media.isNotEmpty()){
-                    (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).text =
+                    textAppbar.text =
                         "${album.name} (${album.itemsNumber})"
                 }else {
                     albumes?.remove(File(album.path))
-                    (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).text =
+                    textAppbar.text =
                         "${album.name} (0)"
                     txtAlbumEmpty.visibility = View.VISIBLE
                 }
@@ -383,11 +392,11 @@ class ViewAlbum : Fragment() {
         val media = getImagesFromAlbum(album.path)
 
         if(media.isNotEmpty()){
-            (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).text =
-                "${album.name} (${album.itemsNumber})"
+            textAppbar.text =
+                "${album.name} (${media.size})"
         }else {
             albumes?.remove(File(album.path))
-            (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).text =
+            textAppbar.text =
                 "${album.name} (0)"
             txtAlbumEmpty.visibility = View.VISIBLE
         }
