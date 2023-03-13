@@ -3,6 +3,7 @@ package com.brandonhxrr.gallery
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.GridLayoutManager
@@ -19,13 +20,19 @@ class AlbumSelection : AppCompatActivity() {
     private lateinit var albumSelectionAdapter: AlbumSelectionAdapter
     private lateinit var builder: RequestBuilder<Bitmap>
     private lateinit var recyclerView: RecyclerView
+    private lateinit var textAppBar: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_album_selection)
 
+        textAppBar = findViewById(R.id.textAppbar)
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+
+        val operation = intent.getStringExtra("operation")
+
+        textAppBar.text = if(operation == "COPY") getString(R.string.menu_copy) else getString(R.string.menu_move)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)

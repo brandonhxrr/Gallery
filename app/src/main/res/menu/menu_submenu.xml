@@ -3,17 +3,17 @@
     <item
         android:id="@+id/menu_details"
         android:enabled="true"
-        android:title="Detalles"/>
+        android:title="@string/menu_details"/>
     <item
         android:id="@+id/menu_move"
         android:enabled="true"
-        android:title="Mover a"/>
+        android:title="@string/menu_move"/>
     <item
         android:id="@+id/menu_copy"
         android:enabled="true"
-        android:title="Copiar a"/>
+        android:title="@string/menu_copy"/>
     <item
         android:id="@+id/menu_rename"
         android:enabled="true"
-        android:title="Renombrar"/>
+        android:title="@string/menu_rename"/>
 </menu>

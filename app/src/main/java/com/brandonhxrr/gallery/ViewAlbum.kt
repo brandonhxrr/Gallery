@@ -220,14 +220,16 @@ class ViewAlbum : Fragment() {
             when(menuItem.itemId){
                 R.id.menu_copy -> {
                     val selectionIntent = Intent(requireContext(), AlbumSelection::class.java)
-                    resultLauncher.launch(selectionIntent)
                     operation = "COPY"
+                    selectionIntent.putExtra("operation", operation)
+                    resultLauncher.launch(selectionIntent)
                     true
                 }
                 R.id.menu_move -> {
                     val selectionIntent = Intent(requireContext(), AlbumSelection::class.java)
-                    resultLauncher.launch(selectionIntent)
                     operation = "MOVE"
+                    selectionIntent.putExtra("operation", operation)
+                    resultLauncher.launch(selectionIntent)
                     true
                 }
                 R.id.menu_select_all -> {

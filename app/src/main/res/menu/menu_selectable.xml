@@ -3,9 +3,9 @@
     <item
         android:id="@+id/menu_move"
         android:enabled="true"
-        android:title="Mover a"/>
+        android:title="@string/menu_move"/>
     <item
         android:id="@+id/menu_copy"
         android:enabled="true"
-        android:title="Copiar a"/>
+        android:title="@string/menu_copy"/>
 </menu>

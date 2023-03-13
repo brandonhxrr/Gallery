@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -43,7 +42,7 @@ class AlbumViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                 try{
                     items = getImageVideoNumber(parent)
                 }catch (e : Exception){
-                    Log.d("GETIMAGEVIDEONUMBER", "HUBO UN ERROR: " + e.message)
+                    Log.d("GETIMAGEVIDEONUMBER", e.message.toString())
                 }
 
                 counter.text = if (items > 1) "$items items" else  "1 item"
