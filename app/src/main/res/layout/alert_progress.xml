@@ -18,7 +18,6 @@
         android:fontFamily="@font/product_sans_regular"
         android:paddingHorizontal="20dp"
         android:textSize="15sp"
-        android:paddingBottom="30dp"
-        android:text="5/10"/>
+        android:paddingBottom="30dp"/>
 
 </LinearLayout>

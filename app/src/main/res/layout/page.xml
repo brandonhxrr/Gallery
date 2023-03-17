@@ -17,6 +17,7 @@
         android:src="@drawable/play_button2"
         android:visibility="invisible"
         android:layout_centerInParent="true"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        android:contentDescription="@string/current_image"/>
 
 </RelativeLayout>

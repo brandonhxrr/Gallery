@@ -25,7 +25,8 @@
                 android:layout_height="match_parent"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:clickable="true"
-                android:focusable="true"/>
+                android:focusable="true"
+                android:contentDescription="@string/album_image"/>
         </com.brandonhxrr.gallery.SquareFrameLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -51,7 +52,6 @@
         android:layout_height="wrap_content"
         android:textSize="12sp"
         android:fontFamily="@font/product_sans_regular"
-        android:text="115 items"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"

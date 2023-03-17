@@ -80,7 +80,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:src="@drawable/ic_delete"/>
+                android:src="@drawable/ic_delete"
+                android:contentDescription="@string/menu_delete"/>
 
             <ImageButton
                 android:id="@+id/btn_share"
@@ -89,7 +90,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:src="@drawable/ic_share" />
+                android:src="@drawable/ic_share"
+                android:contentDescription="@string/menu_share"/>
 
             <ImageButton
                 android:id="@+id/btn_menu"
@@ -98,7 +100,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:src="@drawable/ic_menu" />
+                android:src="@drawable/ic_menu"
+                android:contentDescription="@string/menu_more"/>
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.appcompat.widget.Toolbar>
 </androidx.constraintlayout.widget.ConstraintLayout>

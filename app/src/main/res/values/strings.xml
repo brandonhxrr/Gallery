@@ -11,5 +11,15 @@
     <string name="menu_select_all">Select all</string>
     <string name="menu_details">Details</string>
     <string name="menu_rename">Rename</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_more">More</string>
+    <string name="menu_close">Close</string>
+    <string name="album_image">Album image</string>
+    <string name="album_empty">There are no images in the album!</string>
+    <string name="rename_file_hint">New file name</string>
+    <string name="current_image">Current image</string>
+    <string name="image">Picture item</string>
+    <string name="video_placeholder">Video placeholder</string>
+    <string name="item_selected">Item selected</string>
     <string name="title_activity_album_selection">AlbumSelection</string>
 </resources>
