@@ -1,7 +1,6 @@
 package com.brandonhxrr.gallery
 
 import android.Manifest
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -9,8 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
-import android.util.Log
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -53,11 +50,11 @@ open class Splash : AppCompatActivity() {
             }
         } else {
             MaterialAlertDialogBuilder(this)
-                .setTitle("Permission denied")
-                .setMessage("Permission to access storage is required to continue")
-                .setPositiveButton("Retry"){ _, _ ->
+                .setTitle(getString(R.string.permission_denied))
+                .setMessage(getString(R.string.permission_denied_exp))
+                .setPositiveButton(getString(R.string.retry)){ _, _ ->
                     checkPermissions()
-                }.setNegativeButton("Exit"){ _, _ ->
+                }.setNegativeButton(getString(R.string.exit)){ _, _ ->
                     finish()
                 }.setCancelable(false).show()
         }

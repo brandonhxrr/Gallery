@@ -1,9 +1,9 @@
 package com.brandonhxrr.gallery.adapter
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.brandonhxrr.gallery.AlbumSelection
 import com.bumptech.glide.RequestBuilder
 import java.io.File
 
@@ -19,6 +19,7 @@ class AlbumSelectionAdapter(private val glide: RequestBuilder<Bitmap>) : Recycle
 
     override fun getItemCount(): Int = indexes.size
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setItems(fileMap: Map<File, List<File>>) {
         items = fileMap
         indexes = fileMap.keys.toList().sortedBy { it.nameWithoutExtension }

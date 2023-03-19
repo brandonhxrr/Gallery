@@ -1,5 +1,6 @@
 package com.brandonhxrr.gallery
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -65,6 +66,7 @@ class ViewAlbum : Fragment() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -73,8 +75,6 @@ class ViewAlbum : Fragment() {
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
         initRecyclerView(requireContext())
 
-        (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar).text =
-            "${album.name} (${album.itemsNumber})"
         (activity as AppCompatActivity).findViewById<ImageView>(R.id.app_logo).visibility = View.GONE
 
         toolbar = (activity as AppCompatActivity).findViewById(R.id.toolbar)
@@ -83,6 +83,7 @@ class ViewAlbum : Fragment() {
         deleteButton = selectableToolbar.findViewById(R.id.btn_delete)
         txtItemsNum = selectableToolbar.findViewById(R.id.text_items_num)
         textAppbar = (activity as AppCompatActivity).findViewById<MaterialTextView>(R.id.textAppbar)
+        textAppbar.text = getString(R.string.album_detail, album.name, album.itemsNumber)
 
 
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
@@ -100,14 +101,14 @@ class ViewAlbum : Fragment() {
                     }
                 }
             } else {
-                Toast.makeText(requireContext(), "File couldn't be deleted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.file_not_deleted), Toast.LENGTH_SHORT).show()
             }
         }
 
         deleteButton.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Eliminar ${itemsList.size} archivos")
-                .setPositiveButton("Eliminar") { _, _ ->
+                .setTitle(getString(R.string.delete_n_files, itemsList.size.toString()))
+                .setPositiveButton(getString(R.string.menu_delete)) { _, _ ->
 
                     for (item in itemsList) {
                         val currentFile = File(item.path)
@@ -122,15 +123,15 @@ class ViewAlbum : Fragment() {
                         ) {
                             recyclerView.adapter?.notifyItemRemoved(item.position)
                         } else {
-                            Toast.makeText(requireContext(), "File couldn't be deleted", Toast.LENGTH_SHORT)
+                            Toast.makeText(requireContext(), getString(R.string.file_not_deleted), Toast.LENGTH_SHORT)
                                 .show()
                         }
                     }
-                    Toast.makeText(requireContext(), "Files deleted", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.files_deleted), Toast.LENGTH_SHORT).show()
                     disableSelectable()
                     updateAdapterData()
                 }
-                .setNegativeButton("Cancelar") { dialog, _ ->
+                .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                     dialog.dismiss()
                 }.show()
         }
@@ -143,6 +144,7 @@ class ViewAlbum : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onDestroyView() {
         super.onDestroyView()
         textAppbar.text = getString(R.string.app_name)
@@ -211,6 +213,7 @@ class ViewAlbum : Fragment() {
         })
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onResume() {
         super.onResume()
 
@@ -252,19 +255,17 @@ class ViewAlbum : Fragment() {
                 }
                 recyclerView.swapAdapter(myAdapter, false)
 
-                if(media.isNotEmpty()){
-                    textAppbar.text =
-                        "${album.name} (${album.itemsNumber})"
-                }else {
+                if(media.isEmpty()){
                     albumes?.remove(File(album.path))
-                    textAppbar.text =
-                        "${album.name} (0)"
                     txtAlbumEmpty.visibility = View.VISIBLE
                 }
+
+                textAppbar.text = getString(R.string.album_detail, album.name, media.size.toString())
             }
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun showDeleteMenu(show: Boolean, items: Number = 0) {
         when(show){
             true -> {
@@ -309,14 +310,14 @@ class ViewAlbum : Fragment() {
 
             when(operation) {
                 "MOVE" -> {
-                    alertProgress.setTitle("Moviendo archivos")
+                    alertProgress.setTitle(getString(R.string.moving_files))
                     val alertShow = alertProgress.show()
                     lifecycleScope.launch(Dispatchers.Main) {
                         for (item in itemsList) {
                                 try{
                                     currentFile = File(item.path)
                                     progressBar.progress = currentOperation
-                                    progressText.text = "$currentOperation/${itemsList.size}"
+                                    progressText.text = getString(R.string.operation_detail, currentOperation.toString(), itemsList.size.toString())
                                     currentOperation++
 
                                     withContext(Dispatchers.IO) {
@@ -327,20 +328,20 @@ class ViewAlbum : Fragment() {
                                 }
                         }
                         alertShow.dismiss()
-                        Toast.makeText(context, "Files moved successfully", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, getString(R.string.files_moved), Toast.LENGTH_SHORT).show()
                         showDeleteMenu(false)
                         updateAdapterData()
                     }
                 }
                 "COPY" -> {
-                    alertProgress.setTitle("Copiando archivos")
+                    alertProgress.setTitle(getString(R.string.copying_files))
                     val alertShow = alertProgress.show()
                     lifecycleScope.launch(Dispatchers.Main) {
                         for (item in itemsList) {
                             try{
                                 currentFile = File(item.path)
                                 progressBar.progress = currentOperation
-                                progressText.text = "$currentOperation/${itemsList.size}"
+                                progressText.text = getString(R.string.operation_detail, currentOperation.toString(), itemsList.size.toString())
                                 currentOperation++
 
                                 withContext(Dispatchers.IO) {
@@ -352,7 +353,7 @@ class ViewAlbum : Fragment() {
 
                         }
                         alertShow.dismiss()
-                        Toast.makeText(context, "Files copied successfully", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, getString(R.string.files_copied), Toast.LENGTH_SHORT).show()
                         showDeleteMenu(false)
                         updateAdapterData()
                     }
@@ -379,6 +380,7 @@ class ViewAlbum : Fragment() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun disableSelectable(){
         recyclerView = (context as Activity).findViewById(R.id.gridRecyclerView)
         selectableToolbar.visibility = View.GONE
@@ -393,15 +395,12 @@ class ViewAlbum : Fragment() {
 
         val media = getImagesFromAlbum(album.path)
 
-        if(media.isNotEmpty()){
-            textAppbar.text =
-                "${album.name} (${media.size})"
-        }else {
+        if(media.isEmpty()){
             albumes?.remove(File(album.path))
-            textAppbar.text =
-                "${album.name} (0)"
             txtAlbumEmpty.visibility = View.VISIBLE
         }
+
+        textAppbar.text = getString(R.string.album_detail, album.name, media.size.toString())
 
         val glide = Glide.with(requireContext())
         val builder = glide.asBitmap()

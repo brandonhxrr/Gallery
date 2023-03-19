@@ -1,11 +1,11 @@
 package com.brandonhxrr.gallery.adapter
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityOptions
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +21,7 @@ class PhotoViewHolder(view: View,val adapter: PhotoAdapter, private val showDele
     private val videoPlaceholder : ImageView = view.findViewById(R.id.placeholder)
     private val fileSelected: ImageView = view.findViewById(R.id.selected)
 
+    @SuppressLint("NotifyDataSetChanged")
     fun render(
         photoModel: Photo,
         glide: RequestBuilder<Bitmap>,
@@ -48,7 +49,6 @@ class PhotoViewHolder(view: View,val adapter: PhotoAdapter, private val showDele
                 dataList[photoModel.position].selected = true
                 adapter.setSelectedItem(photoModel.position)
                 Glide.with(image.context).load(R.drawable.file_selected).into(fileSelected)
-                Log.d("COPY100: SItemsL", itemsList.toString())
                 selectable = true
                 bindingAdapter?.notifyDataSetChanged()
                 showDeleteMenu(true, itemsList.size)
@@ -95,7 +95,6 @@ class PhotoViewHolder(view: View,val adapter: PhotoAdapter, private val showDele
                 adapter.removeSelectedItem(photoModel.position)
                 Glide.with(image.context).load(R.drawable.file_unselected).into(fileSelected)
             }
-            Log.d("COPY100: SItemsC", itemsList.toString())
 
             if(itemsList.isEmpty()){
                 selectable = false

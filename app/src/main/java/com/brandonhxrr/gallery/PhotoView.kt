@@ -130,7 +130,7 @@ class PhotoView : AppCompatActivity() {
             intent.type = if (imageExtensions.contains(currentFile.extension)) "image/*" else "video/*"
             val uri = FileProvider.getUriForFile(this, "${this.packageName}.provider", currentFile)
             intent.putExtra(Intent.EXTRA_STREAM, uri)
-            startActivity(Intent.createChooser(intent, "Share"))
+            startActivity(Intent.createChooser(intent, getString(R.string.menu_share)))
         }
 
         btnMenu.setOnClickListener {
@@ -145,7 +145,7 @@ class PhotoView : AppCompatActivity() {
                     }
                 }
             } else {
-                Toast.makeText(this, "File couldn't be deleted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.file_not_deleted), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -190,7 +190,7 @@ class PhotoView : AppCompatActivity() {
                         }else if(deletePhotoFromExternal(this, getContentUri(this, currentFile)!!, intentSenderLauncher)) {
                            removeImageFromAdapter()
                         }else {
-                            Toast.makeText(this, "File couldn't be deleted", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, getString(R.string.file_not_deleted), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -213,7 +213,7 @@ class PhotoView : AppCompatActivity() {
             currentFile = File(media!![position].path)
             setDateTime()
 
-            Toast.makeText(this, "File deleted successfully", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.file_deleted), Toast.LENGTH_SHORT).show()
         }else {
             onBackPressedDispatcher.onBackPressed()
         }
@@ -226,7 +226,8 @@ class PhotoView : AppCompatActivity() {
         popup.setOnMenuItemClickListener { menuItem: MenuItem ->
             when (menuItem.itemId) {
                 R.id.menu_details-> {
-                    val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm a", Locale.getDefault())
+                    //"dd/MM/yyyy HH:mm a"
+                    val dateFormat = SimpleDateFormat(getString(R.string.time_format), Locale.getDefault())
                     val lastModified = currentFile.lastModified()
                     val fileSize = currentFile.length()
 
@@ -242,12 +243,12 @@ class PhotoView : AppCompatActivity() {
 
                     MaterialAlertDialogBuilder(this)
                         //.setTitle((position + 1).toString() + "/" + media!!.size.toString())
-                        .setMessage("Ruta: " + currentFile.absolutePath
-                                + "\nTipo: " + currentFile.extension
-                                + "\nTamaño: " + fileSizeString
-                                + "\nResolución: " + getResolution(currentFile.path)
-                                + "\nFecha: " + dateFormat.format(Date(lastModified)))
-                        .setPositiveButton("Aceptar") { dialog, _ ->
+                        .setMessage(getString(R.string.details_path) + ": " + currentFile.absolutePath
+                                + "\n" + getString(R.string.details_type) + ": " + currentFile.extension
+                                + "\n" + getString(R.string.details_size) + ": " + fileSizeString
+                                + "\n" + getString(R.string.details_resolution) + ": " + getResolution(currentFile.path)
+                                + "\n" + getString(R.string.details_date) + ": " + dateFormat.format(Date(lastModified)))
+                        .setPositiveButton(getString(R.string.accept)) { dialog, _ ->
                             dialog.dismiss()
                         }
                         .show()
@@ -277,20 +278,20 @@ class PhotoView : AppCompatActivity() {
                     textInputEditText.setText(currentFile.nameWithoutExtension)
 
                     MaterialAlertDialogBuilder(this)
-                        .setTitle("Renombrar")
+                        .setTitle(getString(R.string.menu_rename))
                         .setView(textInputLayout)
-                        .setPositiveButton("Renombrar") { _, _ ->
+                        .setPositiveButton(getString(R.string.menu_rename)) { _, _ ->
                             var newName = textInputEditText.text.toString()
                             newName += "." + currentFile.extension
                             val newFile = File(currentFile.parent!! + "/" + newName)
                             if (currentFile.renameTo(newFile)) {
                                 currentFile = File(media!![position].path)
-                                Toast.makeText(this, "El archivo se ha renombrado correctamente", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this, getString(R.string.file_renamed), Toast.LENGTH_SHORT).show()
                             } else {
-                                Toast.makeText(this, "No se pudo renombrar el archivo", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this, getString(R.string.file_not_renamed), Toast.LENGTH_SHORT).show()
                             }
                         }
-                        .setNegativeButton("Cancelar") { dialog, _ ->
+                        .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                             dialog.dismiss()
                         }
                         .show()
@@ -329,7 +330,7 @@ class PhotoView : AppCompatActivity() {
     private fun setDateTime() {
         val date = Date(currentFile.lastModified())
         val inputFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy", Locale.getDefault())
-        val outputFormatDate = SimpleDateFormat("dd 'de' MMMM 'de' yyyy", Locale.getDefault())
+        val outputFormatDate = SimpleDateFormat(getString(R.string.time_format_date), Locale.getDefault())
         val outputFormatTime = SimpleDateFormat("hh:mm a", Locale.getDefault())
 
         val input = inputFormat.format(date)

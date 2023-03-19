@@ -1,14 +1,13 @@
 package com.brandonhxrr.gallery
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.ImageButton
 import android.widget.ProgressBar
@@ -29,13 +28,9 @@ import com.brandonhxrr.gallery.databinding.FragmentFirstBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.*
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
 
 class FirstFragment : Fragment() {
 
@@ -69,6 +64,7 @@ class FirstFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onDestroyView() {
         super.onDestroyView()
         if(selectableToolbar.visibility == View.VISIBLE){
@@ -111,7 +107,7 @@ class FirstFragment : Fragment() {
                     }
                 }
             } else {
-                Toast.makeText(requireContext(), "File couldn't be deleted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.file_not_deleted), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -171,8 +167,8 @@ class FirstFragment : Fragment() {
 
         deleteButton.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Eliminar ${itemsList.size} archivos")
-                .setPositiveButton("Eliminar") { _, _ ->
+                .setTitle(getString(R.string.delete_n_files, itemsList.size.toString()))
+                .setPositiveButton(getString(R.string.menu_delete)) { _, _ ->
 
                     for (item in itemsList) {
                         val currentFile = File(item.path)
@@ -187,17 +183,17 @@ class FirstFragment : Fragment() {
                         ) {
                             recyclerView.adapter?.notifyItemRemoved(item.position)
                         } else {
-                            Toast.makeText(requireContext(), "File couldn't be deleted", Toast.LENGTH_SHORT)
+                            Toast.makeText(requireContext(), getString(R.string.file_not_deleted), Toast.LENGTH_SHORT)
                                 .show()
                         }
                     }
-                    Toast.makeText(requireContext(), "Files deleted", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.files_deleted), Toast.LENGTH_SHORT).show()
                     disableSelectable()
                     updateAdapterData()
                 }
-                .setNegativeButton("Cancelar", DialogInterface.OnClickListener { dialog, _ ->
+                .setNegativeButton(R.string.cancel) { dialog, _ ->
                     dialog.dismiss()
-                }).show()
+                }.show()
         }
 
         super.onResume()
@@ -213,6 +209,7 @@ class FirstFragment : Fragment() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun showDeleteMenu(show: Boolean, items: Number) {
         when(show){
             true -> {
@@ -257,7 +254,7 @@ class FirstFragment : Fragment() {
 
             when(operation) {
                 "MOVE" -> {
-                    alertProgress.setTitle("Moviendo archivos")
+                    alertProgress.setTitle(getString(R.string.alert_moving))
                     val alertShow = alertProgress.show()
                     lifecycleScope.launch(Dispatchers.IO) {
                         for (item in itemsList) {
@@ -267,19 +264,19 @@ class FirstFragment : Fragment() {
 
                             withContext(Dispatchers.Main) {
                                 progressBar.progress = currentOperation
-                                progressText.text = "$currentOperation/${itemsList.size}"
+                                "$currentOperation/${itemsList.size}".also { progressText.text = it }
                             }
                         }
                         withContext(Dispatchers.Main) {
                             alertShow.dismiss()
-                            Toast.makeText(context, "Files moved successfully", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, getString(R.string.files_moved), Toast.LENGTH_SHORT).show()
                             showDeleteMenu(false, 0)
                         }
                     }
 
                 }
                 "COPY" -> {
-                    alertProgress.setTitle("Copiando archivos")
+                    alertProgress.setTitle(getString(R.string.alert_copying))
                     val alertShow = alertProgress.show()
                     lifecycleScope.launch(Dispatchers.IO) {
                         for (item in itemsList) {
@@ -289,12 +286,12 @@ class FirstFragment : Fragment() {
 
                             withContext(Dispatchers.Main) {
                                 progressBar.progress = currentOperation
-                                progressText.text = "$currentOperation/${itemsList.size}"
+                                "$currentOperation/${itemsList.size}".also { progressText.text = it }
                             }
                         }
                         withContext(Dispatchers.Main) {
                             alertShow.dismiss()
-                            Toast.makeText(context, "Files copied successfully", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, getString(R.string.files_copied), Toast.LENGTH_SHORT).show()
                             showDeleteMenu(false, 0)
                         }
                     }
@@ -320,6 +317,7 @@ class FirstFragment : Fragment() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun disableSelectable(){
         selectableToolbar.visibility = View.GONE
         toolbar.visibility = View.VISIBLE

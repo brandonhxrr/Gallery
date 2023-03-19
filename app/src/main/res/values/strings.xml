@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Gallery</string>
+    <string name="app_name" translatable="false">Gallery</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
@@ -14,7 +14,9 @@
     <string name="menu_share">Share</string>
     <string name="menu_more">More</string>
     <string name="menu_close">Close</string>
+    <string name="operation_detail">%s/%s</string>
     <string name="album_image">Album image</string>
+    <string name="album_detail">%s (%s)</string>
     <string name="album_empty">There are no images in the album!</string>
     <string name="rename_file_hint">New file name</string>
     <string name="current_image">Current image</string>
@@ -22,4 +24,31 @@
     <string name="video_placeholder">Video placeholder</string>
     <string name="item_selected">Item selected</string>
     <string name="title_activity_album_selection">AlbumSelection</string>
+    <string name="file_not_deleted">File couldn\'t be deleted</string>
+    <string name="file_deleted">File deleted</string>
+    <string name="files_deleted">Files deleted</string>
+    <string name="files_moved">Files moved successfully</string>
+    <string name="files_copied">Files copied successfully</string>
+    <string name="delete_n_files">Delete %s files</string>
+    <string name="file_renamed">File renamed</string>
+    <string name="file_not_renamed">File couldn\'t be renamed</string>
+    <string name="copying_files">Copying files</string>
+    <string name="moving_files">Moving files</string>
+    <string name="cancel">Cancel</string>
+    <string name="accept">Accept</string>
+    <string name="retry">Retry</string>
+    <string name="exit">Exit</string>
+    <string name="alert_moving">Moving files</string>
+    <string name="alert_copying">Copying files</string>
+    <string name="time_format">dd/MM/yyyy HH:mm a</string>
+    <string name="time_format_date">MMMM dd\',\' yyyy</string>
+    <string name="details_path">Path</string>
+    <string name="details_type">Type</string>
+    <string name="details_size">Size</string>
+    <string name="details_resolution">Resolution</string>
+    <string name="details_date">Date</string>
+    <string name="permission_denied">Permission denied</string>
+    <string name="permission_denied_exp">Permission to access storage is required to continue</string>
+    <string name="multi_items">%s items</string>
+    <string name="single_item">1 item</string>
 </resources>

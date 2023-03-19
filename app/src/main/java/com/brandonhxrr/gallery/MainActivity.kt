@@ -1,5 +1,6 @@
 package com.brandonhxrr.gallery
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -22,13 +23,8 @@ import androidx.navigation.ui.navigateUp
 import androidx.recyclerview.widget.RecyclerView
 import com.brandonhxrr.gallery.adapter.PhotoAdapter
 import com.brandonhxrr.gallery.databinding.ActivityMainBinding
-import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.textview.MaterialTextView
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 
 class MainActivity : AppCompatActivity() {
@@ -41,7 +37,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var deleteButton: ImageButton
     private lateinit var shareButton: ImageButton
     private lateinit var intentSenderLauncher: ActivityResultLauncher<IntentSenderRequest>
-    private lateinit var myAdapter: PhotoAdapter
     private var deletedImageUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -114,7 +109,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             } else {
-                Toast.makeText(this, "File couldn't be deleted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.file_not_deleted), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -129,6 +124,7 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun disableSelectable(){
         recyclerView = findViewById(R.id.gridRecyclerView)
         selectableToolbar.visibility = View.GONE

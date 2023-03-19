@@ -1,5 +1,6 @@
 package com.brandonhxrr.gallery.adapter
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -31,6 +32,7 @@ class PhotoAdapter(
 
     override fun getItemCount(): Int = dataList.size
 
+    @SuppressLint("NotifyDataSetChanged")
     fun addMoreData() : Boolean{
         if(pageNumber < limitPage) {
             pageNumber++

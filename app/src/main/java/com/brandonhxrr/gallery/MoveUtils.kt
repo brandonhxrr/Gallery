@@ -15,8 +15,8 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
-val PERMISSION_PREFS_NAME = "permissions"
-val SD_CARD_PERMISSION_GRANTED_KEY = "sd_card_permission_granted"
+const val PERMISSION_PREFS_NAME = "permissions"
+const val SD_CARD_PERMISSION_GRANTED_KEY = "sd_card_permission_granted"
 
 fun copyFileToUri(context: Context, fileToCopy: File, destinationPath: String, moveFile: Boolean, requestPermissionLauncher: ActivityResultLauncher<Intent>, intentSenderLauncher: ActivityResultLauncher<IntentSenderRequest>) {
     try{
@@ -40,7 +40,6 @@ fun copyFileToUri(context: Context, fileToCopy: File, destinationPath: String, m
             copyToExternal(context, fileToCopy, destinationPath, moveFile, intentSenderLauncher)
         }
     }
-
 }
 
 fun copyToExternal(context: Context, fileToCopy: File, destinationPath: String, moveFile: Boolean, intentSenderLauncher: ActivityResultLauncher<IntentSenderRequest>){

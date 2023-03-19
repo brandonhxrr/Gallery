@@ -3,22 +3,15 @@ package com.brandonhxrr.gallery.adapter
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.os.bundleOf
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.brandonhxrr.gallery.Album
 import com.brandonhxrr.gallery.R
 import com.brandonhxrr.gallery.getImageVideoNumber
 import com.bumptech.glide.RequestBuilder
-import com.google.gson.Gson
 import java.io.File
 
 class AlbumSelectionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -47,7 +40,7 @@ class AlbumSelectionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                     items = getImageVideoNumber(parent)
                 }catch (_: Exception){ }
 
-                counter.text = if (items > 1) "$items items" else  "1 item"
+                counter.text = if (items > 1) counter.context.getString(R.string.multi_items, items.toString()) else  counter.context.getString(R.string.single_item)
 
                 image.setOnClickListener {
                     val intent = Intent()

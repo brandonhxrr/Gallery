@@ -45,7 +45,7 @@ class AlbumViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                     Log.d("GETIMAGEVIDEONUMBER", e.message.toString())
                 }
 
-                counter.text = if (items > 1) "$items items" else  "1 item"
+                counter.text = if (items > 1) counter.context.getString(R.string.multi_items, items.toString()) else  counter.context.getString(R.string.single_item)
 
                 image.setOnClickListener {
                     val gson = Gson()
