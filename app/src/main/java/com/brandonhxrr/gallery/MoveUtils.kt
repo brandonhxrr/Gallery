@@ -22,6 +22,7 @@ fun copyFileToUri(context: Context, fileToCopy: File, destinationPath: String, m
     try{
         val filePath = "$destinationPath/${fileToCopy.name}"
         val newFile = File(filePath)
+        newFile.setLastModified(fileToCopy.lastModified())
 
         val inputStream = FileInputStream(fileToCopy)
         val outputStream = FileOutputStream(newFile)

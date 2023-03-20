@@ -139,7 +139,10 @@ class ViewAlbum : Fragment() {
         txtItemsNum.setOnClickListener {
             myAdapter.selectAllItems()
             myAdapter.notifyDataSetChanged()
+            txtItemsNum.text = itemsList.size.toString()
         }
+
+        selectableToolbar.inflateMenu(R.menu.menu_selectable_album)
 
         return binding.root
     }
@@ -217,7 +220,7 @@ class ViewAlbum : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        selectableToolbar.inflateMenu(R.menu.menu_selectable_album)
+
 
         selectableToolbar.setOnMenuItemClickListener {menuItem ->
             when(menuItem.itemId){

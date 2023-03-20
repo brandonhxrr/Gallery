@@ -143,6 +143,7 @@ class FirstFragment : Fragment() {
     override fun onResume() {
         toolbar = (activity as AppCompatActivity).findViewById(R.id.toolbar)
         selectableToolbar = (activity as AppCompatActivity).findViewById(R.id.selectable_toolbar)
+        selectableToolbar.menu.clear()
         deleteButton = selectableToolbar.findViewById(R.id.btn_delete)
         selectableToolbar.inflateMenu(R.menu.menu_selectable)
         selectableToolbar.setOnMenuItemClickListener {menuItem ->

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.brandonhxrr.gallery.*
 import com.bumptech.glide.RequestBuilder
+import java.io.File
 
 class PhotoAdapter(
     private val photoList: List<Photo>,

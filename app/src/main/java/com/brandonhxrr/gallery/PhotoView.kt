@@ -187,8 +187,10 @@ class PhotoView : AppCompatActivity() {
                     R.id.menu_delete -> {
                         if(currentFile.delete()){
                             removeImageFromAdapter()
+                            Toast.makeText(this, getString(R.string.file_deleted), Toast.LENGTH_SHORT).show()
                         }else if(deletePhotoFromExternal(this, getContentUri(this, currentFile)!!, intentSenderLauncher)) {
                            removeImageFromAdapter()
+                            Toast.makeText(this, getString(R.string.file_deleted), Toast.LENGTH_SHORT).show()
                         }else {
                             Toast.makeText(this, getString(R.string.file_not_deleted), Toast.LENGTH_SHORT).show()
                         }
@@ -212,8 +214,6 @@ class PhotoView : AppCompatActivity() {
             viewPager.currentItem = position
             currentFile = File(media!![position].path)
             setDateTime()
-
-            Toast.makeText(this, getString(R.string.file_deleted), Toast.LENGTH_SHORT).show()
         }else {
             onBackPressedDispatcher.onBackPressed()
         }
@@ -311,6 +311,7 @@ class PhotoView : AppCompatActivity() {
             when(operation) {
                 "MOVE" -> {
                     copyFileToUri(this, currentFile, destinationPath, true, requestPermissionLauncher, intentSenderLauncher)
+                    removeImageFromAdapter()
                 }
                 "COPY" -> {
                     copyFileToUri(this, currentFile, destinationPath, false, requestPermissionLauncher, intentSenderLauncher)
