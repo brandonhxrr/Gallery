@@ -14,9 +14,9 @@
     <string name="menu_share">Share</string>
     <string name="menu_more">More</string>
     <string name="menu_close">Close</string>
-    <string name="operation_detail">%s/%s</string>
+    <string name="operation_detail" translatable="false">%s/%s</string>
     <string name="album_image">Album image</string>
-    <string name="album_detail">%s (%s)</string>
+    <string name="album_detail" translatable="false">%s (%s)</string>
     <string name="album_empty">There are no images in the album!</string>
     <string name="rename_file_hint">New file name</string>
     <string name="current_image">Current image</string>
@@ -38,9 +38,7 @@
     <string name="accept">Accept</string>
     <string name="retry">Retry</string>
     <string name="exit">Exit</string>
-    <string name="alert_moving">Moving files</string>
-    <string name="alert_copying">Copying files</string>
-    <string name="time_format">dd/MM/yyyy HH:mm a</string>
+    <string name="time_format">MM/dd/yyyy HH:mm a</string>
     <string name="time_format_date">MMMM dd\',\' yyyy</string>
     <string name="details_path">Path</string>
     <string name="details_type">Type</string>

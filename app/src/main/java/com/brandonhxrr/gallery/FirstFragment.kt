@@ -254,7 +254,7 @@ class FirstFragment : Fragment() {
 
             when(operation) {
                 "MOVE" -> {
-                    alertProgress.setTitle(getString(R.string.alert_moving))
+                    alertProgress.setTitle(getString(R.string.moving_files))
                     val alertShow = alertProgress.show()
                     lifecycleScope.launch(Dispatchers.IO) {
                         for (item in itemsList) {
@@ -276,7 +276,7 @@ class FirstFragment : Fragment() {
 
                 }
                 "COPY" -> {
-                    alertProgress.setTitle(getString(R.string.alert_copying))
+                    alertProgress.setTitle(getString(R.string.copying_files))
                     val alertShow = alertProgress.show()
                     lifecycleScope.launch(Dispatchers.IO) {
                         for (item in itemsList) {
