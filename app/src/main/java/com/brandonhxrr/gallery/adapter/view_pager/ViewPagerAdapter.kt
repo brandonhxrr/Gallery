@@ -1,4 +1,4 @@
-package com.brandonhxrr.gallery.adapter
+package com.brandonhxrr.gallery.adapter.view_pager
 
 import android.animation.ObjectAnimator
 import android.app.Activity

@@ -21,7 +21,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.recyclerview.widget.RecyclerView
-import com.brandonhxrr.gallery.adapter.PhotoAdapter
+import com.brandonhxrr.gallery.adapter.photo.PhotoAdapter
 import com.brandonhxrr.gallery.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch

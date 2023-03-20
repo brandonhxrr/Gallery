@@ -10,8 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.brandonhxrr.gallery.adapter.AlbumAdapter
-import com.brandonhxrr.gallery.databinding.FragmentSecondBinding
+import com.brandonhxrr.gallery.adapter.album.AlbumAdapter
+import com.brandonhxrr.gallery.databinding.FragmentAlbumsBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import kotlinx.coroutines.Dispatchers
@@ -19,9 +19,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-class SecondFragment : Fragment() {
+class AlbumsFragment : Fragment() {
 
-    private var _binding: FragmentSecondBinding? = null
+    private var _binding: FragmentAlbumsBinding? = null
     private val binding
         get() = _binding!!
     private lateinit var albums: HashMap<File, List<File>>
@@ -39,7 +39,7 @@ class SecondFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentSecondBinding.inflate(inflater, container, false)
+        _binding = FragmentAlbumsBinding.inflate(inflater, container, false)
         initRecyclerView(requireContext())
         return binding.root
     }

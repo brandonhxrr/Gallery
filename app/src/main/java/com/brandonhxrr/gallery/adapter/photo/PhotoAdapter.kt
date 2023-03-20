@@ -1,4 +1,4 @@
-package com.brandonhxrr.gallery.adapter
+package com.brandonhxrr.gallery.adapter.photo
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.brandonhxrr.gallery.*
 import com.bumptech.glide.RequestBuilder
-import java.io.File
 
 class PhotoAdapter(
     private val photoList: List<Photo>,

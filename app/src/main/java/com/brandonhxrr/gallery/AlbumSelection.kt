@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.brandonhxrr.gallery.adapter.AlbumSelectionAdapter
+import com.brandonhxrr.gallery.adapter.album_selection.AlbumSelectionAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import java.io.File

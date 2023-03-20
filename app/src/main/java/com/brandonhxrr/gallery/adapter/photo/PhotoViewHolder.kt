@@ -1,4 +1,4 @@
-package com.brandonhxrr.gallery.adapter
+package com.brandonhxrr.gallery.adapter.photo
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -15,7 +15,7 @@ import com.bumptech.glide.RequestBuilder
 import com.google.gson.Gson
 import java.io.File
 
-class PhotoViewHolder(view: View,val adapter: PhotoAdapter, private val showDeleteMenu: (Boolean, Number) -> Unit) : RecyclerView.ViewHolder(view){
+class PhotoViewHolder(view: View, val adapter: PhotoAdapter, private val showDeleteMenu: (Boolean, Number) -> Unit) : RecyclerView.ViewHolder(view){
 
     private val image : ImageView = view.findViewById(R.id.item_photo)
     private val videoPlaceholder : ImageView = view.findViewById(R.id.placeholder)

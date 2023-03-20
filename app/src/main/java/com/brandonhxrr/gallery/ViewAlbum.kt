@@ -21,8 +21,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.brandonhxrr.gallery.adapter.PhotoAdapter
-import com.brandonhxrr.gallery.databinding.FragmentFirstBinding
+import com.brandonhxrr.gallery.adapter.photo.PhotoAdapter
+import com.brandonhxrr.gallery.databinding.FragmentRecentBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -36,7 +36,7 @@ import java.io.File
 class ViewAlbum : Fragment() {
     private lateinit var album : Album
     private lateinit var toolbar: Toolbar
-    private var _binding: FragmentFirstBinding? = null
+    private var _binding: FragmentRecentBinding? = null
     private val binding get() = _binding!!
 
     private var pastVisibleItems = 0
@@ -72,7 +72,7 @@ class ViewAlbum : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        _binding = FragmentRecentBinding.inflate(inflater, container, false)
         initRecyclerView(requireContext())
 
         (activity as AppCompatActivity).findViewById<ImageView>(R.id.app_logo).visibility = View.GONE

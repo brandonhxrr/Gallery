@@ -1,4 +1,4 @@
-package com.brandonhxrr.gallery.adapter
+package com.brandonhxrr.gallery.adapter.album
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
@@ -18,7 +18,8 @@ class AlbumAdapter(private val glide: RequestBuilder<Bitmap>) : RecyclerView.Ada
 
     override fun onBindViewHolder(holder: AlbumViewHolder, position: Int) = holder.bind(getItemAt(position), glide)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlbumViewHolder = AlbumViewHolder.new(parent)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlbumViewHolder =
+        AlbumViewHolder.new(parent)
 
     override fun getItemCount(): Int = indexes.size
 

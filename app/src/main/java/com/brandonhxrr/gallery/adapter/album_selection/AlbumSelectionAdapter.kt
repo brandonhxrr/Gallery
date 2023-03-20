@@ -1,4 +1,4 @@
-package com.brandonhxrr.gallery.adapter
+package com.brandonhxrr.gallery.adapter.album_selection
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
@@ -15,7 +15,8 @@ class AlbumSelectionAdapter(private val glide: RequestBuilder<Bitmap>) : Recycle
 
     override fun onBindViewHolder(holder: AlbumSelectionViewHolder, position: Int) = holder.bind(getItemAt(position), glide)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlbumSelectionViewHolder = AlbumSelectionViewHolder.new(parent)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlbumSelectionViewHolder =
+        AlbumSelectionViewHolder.new(parent)
 
     override fun getItemCount(): Int = indexes.size
 

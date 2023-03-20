@@ -23,8 +23,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.brandonhxrr.gallery.adapter.PhotoAdapter
-import com.brandonhxrr.gallery.databinding.FragmentFirstBinding
+import com.brandonhxrr.gallery.adapter.photo.PhotoAdapter
+import com.brandonhxrr.gallery.databinding.FragmentRecentBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -32,9 +32,9 @@ import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.*
 import java.io.File
 
-class FirstFragment : Fragment() {
+class RecentFragment : Fragment() {
 
-    private var _binding: FragmentFirstBinding? = null
+    private var _binding: FragmentRecentBinding? = null
     private val binding get() = _binding!!
 
     private var pastVisibleItems = 0
@@ -58,7 +58,7 @@ class FirstFragment : Fragment() {
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        _binding = FragmentRecentBinding.inflate(inflater, container, false)
         initRecyclerView(requireContext())
 
         return binding.root
