@@ -23,6 +23,11 @@ Ability to view and organize your photos and videos in folders.
 
 *Thank you for choosing Gallery!*
 
+<div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; max-width: 100%;">
+  <img src="images/screen1.jpg" style="flex: 1; max-width: 50%; max-height: 50vh;">
+  <img src="images/screen2.jpg" style="flex: 1; max-width: 50%; max-height: 50vh;">
+</div>
+
 <br>
 
 **Disclaimer**
