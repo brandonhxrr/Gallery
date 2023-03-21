@@ -1,79 +1,78 @@
 package com.brandonhxrr.gallery
 
 import android.Manifest
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import androidx.appcompat.app.AlertDialog
+import android.os.Environment
+import android.provider.Settings
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
-import java.io.Serializable
 
-class Splash : AppCompatActivity() {
-
-    protected val REQUEST_STORAGE_READ_ACCESS_PERMISSION = 101
-    protected val REQUEST_STORAGE_WRITE_ACCESS_PERMISSION = 102
+open class Splash : AppCompatActivity() {
+    private val REQUEST_PERMISSIONS = 101
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+    }
 
+    override fun onStart() {
+        super.onStart()
         checkPermissions()
+    }
 
-        val folders: HashMap<File, List<File>> = sortImagesByFolder(getAllImages(this)) as HashMap<File, List<File>>
-
-        val intent = Intent(this, MainActivity::class.java).apply {
-            putExtra("albums", folders)
+    private fun checkPermissions() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()){
+            openSettingsAllFilesAccess(this)
+        }else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager()){
+            loadData()
+        } else{
+            if (!hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE) || !hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) || !hasPermission(Manifest.permission.MANAGE_DOCUMENTS) || !hasPermission(Manifest.permission.ACCESS_MEDIA_LOCATION) || !hasPermission(Manifest.permission.MANAGE_EXTERNAL_STORAGE)) {
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.MANAGE_DOCUMENTS, Manifest.permission.ACCESS_MEDIA_LOCATION, Manifest.permission.MANAGE_EXTERNAL_STORAGE), REQUEST_PERMISSIONS)
+            }else {
+                loadData()
+            }
         }
+    }
+
+    private fun hasPermission(permission: String): Boolean =
+        ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            when (requestCode) {
+                REQUEST_PERMISSIONS -> loadData()
+            }
+        } else {
+            MaterialAlertDialogBuilder(this)
+                .setTitle(getString(R.string.permission_denied))
+                .setMessage(getString(R.string.permission_denied_exp))
+                .setPositiveButton(getString(R.string.retry)){ _, _ ->
+                    checkPermissions()
+                }.setNegativeButton(getString(R.string.exit)){ _, _ ->
+                    finish()
+                }.setCancelable(false).show()
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    private fun loadData() {
+        val folders: HashMap<File, List<File>> = sortImagesByFolder(getAllImages(this)) as HashMap<File, List<File>>
+        albumes = folders
+
+        val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
     }
 
-    private fun checkPermissions() {
-        if (!hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE, getString(R.string.permission_rational_read_external), REQUEST_STORAGE_READ_ACCESS_PERMISSION)
-            return
-        } else if (!hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.permission_rational_read_external), REQUEST_STORAGE_WRITE_ACCESS_PERMISSION)
-            return
-        } else if (hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE) && hasPermission(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )) {
-
-        }
-    }
-
-    fun hasPermission(permission: String): Boolean = ActivityCompat.checkSelfPermission(this@Splash, permission) == PackageManager.PERMISSION_GRANTED
-
-    fun requestPermission(permission: String, rationale: String, requestCode: Int) {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
-            showAlertDialog(getString(R.string.title_permission_needed), rationale,
-                { dialog, which ->
-                    ActivityCompat.requestPermissions(this@Splash, arrayOf(permission), requestCode)
-                }, getString(R.string.label_ok),
-                { dialog, which ->
-                    dialog.dismiss()
-                    finish()
-                }, getString(R.string.label_cancel))
-        } else {
-            ActivityCompat.requestPermissions(this, arrayOf(permission), requestCode)
-        }
-    }
-
-    protected fun showAlertDialog(title: String?, message: String?,
-                                  onPositiveButtonClickListener: DialogInterface.OnClickListener?,
-                                  positiveText: String,
-                                  onNegativeButtonClickListener: DialogInterface.OnClickListener?,
-                                  negativeText: String) {
-        AlertDialog.Builder(this)
-            .setTitle(title)
-            .setMessage(message)
-            .setPositiveButton(positiveText, onPositiveButtonClickListener)
-            .setNegativeButton(negativeText, onNegativeButtonClickListener)
-            .setCancelable(false)
-            .show()
+    @RequiresApi(Build.VERSION_CODES.R)
+    fun openSettingsAllFilesAccess(activity: AppCompatActivity) {
+        val intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+        activity.startActivity(intent)
     }
 }

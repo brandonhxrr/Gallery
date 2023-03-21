@@ -1,5 +1,7 @@
 package com.brandonhxrr.gallery
 
 data class Photo (
-    val path:String
+    val path: String,
+    val position: Int,
+    var selected: Boolean
     )

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.brandonhxrr.gallery.SquareFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="1dp">
+    <ImageView
+        android:id="@+id/item_photo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@color/seed"
+        android:contentDescription="@string/image"/>
+    <ImageView
+        android:id="@+id/placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/play_button"
+        android:contentDescription="@string/video_placeholder"/>
+    <ImageView
+        android:id="@+id/selected"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/file_unselected"
+        android:contentDescription="@string/item_selected"/>
+</com.brandonhxrr.gallery.SquareFrameLayout>
