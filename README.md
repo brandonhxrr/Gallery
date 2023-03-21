@@ -7,9 +7,11 @@
 
 
 <img src="images/baner.png" alt="Profile header" width="100%"/>
-<br/><br/>
 
 ## About
+![Spanish](https://img.shields.io/badge/Languages-%20Spanish-blue?style=for-the-badge)
+![English](https://img.shields.io/badge/-%20English-green?style=for-the-badge)
+
 
 Gallery is an open source application designed to provide a simple and efficient image viewing experience on your Android device. With Gallery, you can organize and browse your photos and videos intuitively and quickly.
 
@@ -40,7 +42,7 @@ Thank you for your understanding and for helping us make Gallery an even better 
 
 **Donate**
 
-[<img src="images/Paypal.svg"
+[<img src="images/PayPal.svg"
       alt='Donate with PayPal'
       height="80">](https://paypal.me/herrerx7?country.x=MX&locale.x=en_US) [<img src="images/BMC.svg"
       alt='Donate with BMC'
