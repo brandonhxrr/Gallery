@@ -117,7 +117,7 @@ class ViewPagerAdapter(
         if(hidden){
             toolbar.visibility = View.GONE
             bottomContainer.visibility = View.GONE
-            windowInsetsController.hide(WindowInsetsCompat.Type.statusBars())
+            windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
 
             val anim = ObjectAnimator.ofArgb(constraintContainer, "backgroundColor", color, Color.BLACK)
             anim.duration = 200
