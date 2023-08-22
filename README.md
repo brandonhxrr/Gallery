@@ -30,7 +30,7 @@ Ability to view and organize your photos and videos in folders.
 
 <br>
 
-**Disclaimer**
+⚠️ **Disclaimer**
 
 Please note that Gallery is currently in beta!
 
@@ -45,7 +45,7 @@ Thank you for your understanding and for helping us make Gallery an even better 
 
 <br>
 
-**Donate**
+🪙 **Donate**
 
 [<img src="images/PayPal.svg"
       alt='Donate with PayPal'
