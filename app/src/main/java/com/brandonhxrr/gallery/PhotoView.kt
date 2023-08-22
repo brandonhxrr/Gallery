@@ -49,7 +49,6 @@ class PhotoView : AppCompatActivity() {
     private lateinit var photoDate: TextView
     private lateinit var photoTime: TextView
     private lateinit var container: ConstraintLayout
-    private lateinit var bottomContainer: Toolbar
     private lateinit var toolbar: Toolbar
     private lateinit var btnDelete: ImageButton
     private lateinit var btnShare: ImageButton
@@ -74,8 +73,6 @@ class PhotoView : AppCompatActivity() {
         photoDate = findViewById(R.id.photo_date)
         photoTime = findViewById(R.id.photo_time)
         container = findViewById(R.id.constraintContainer)
-
-        bottomContainer = findViewById(R.id.bottom_container)
         btnDelete = findViewById(R.id.btn_delete)
         btnShare = findViewById(R.id.btn_share)
         btnMenu = findViewById(R.id.btn_menu)
@@ -115,7 +112,6 @@ class PhotoView : AppCompatActivity() {
         viewPager.currentItem = position
 
         toolbar.visibility = View.GONE
-        bottomContainer.visibility = View.GONE
         windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
         container.setBackgroundColor(Color.BLACK)
 
