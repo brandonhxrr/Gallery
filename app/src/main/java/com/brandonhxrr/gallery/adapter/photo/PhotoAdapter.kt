@@ -15,7 +15,7 @@ class PhotoAdapter(
 ) : RecyclerView.Adapter<PhotoViewHolder>() {
     private var pageNumber: Int = 1
     private val limitPage = (photoList.size / 100) + 1
-    var dataList : List<Photo> = getImagesFromPage(pageNumber, photoList)
+    private var dataList : List<Photo> = getImagesFromPage(pageNumber, photoList)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)

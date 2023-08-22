@@ -14,7 +14,7 @@ import java.io.File
 import java.util.*
 
 val imageExtensions = arrayOf("jpg", "jpeg", "png", "gif", "bmp", "webp")
-val videoExtensions = arrayOf("mp4", "mkv", "avi", "wmv", "mov")
+val videoExtensions = arrayOf("mp4", "mkv", "avi", "wmv", "mov", "flv", "webm", "ogg", "ogv")
 val fileExtensions = imageExtensions.plus(videoExtensions)
 var selectable = false
 
@@ -34,7 +34,7 @@ fun sortImagesByFolder(files: List<File>): Map<File, List<File>> {
 
 fun getImagesFromAlbum(folder: String): List<Photo> {
     return File(folder)
-        .listFiles { file -> file.isFile && fileExtensions.contains(file.extension) }
+        .listFiles { file -> file.isFile && fileExtensions.contains(file.extension.lowercase()) }
         ?.sortedWith(compareByDescending { it.lastModified() })
         ?.map { file -> Photo(path = file.absolutePath, position = 0, selected = false) }
         ?: emptyList()
@@ -119,7 +119,7 @@ fun getContentUri(context: Context, file: File): Uri? {
     val contentUri: Uri
     val contentValues = ContentValues()
 
-    if(file.extension in imageExtensions) {
+    if(file.extension.lowercase() in imageExtensions) {
         mimeType = "image/*"
         contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, file.name)

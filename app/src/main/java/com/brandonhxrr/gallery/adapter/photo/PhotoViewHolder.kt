@@ -31,7 +31,7 @@ class PhotoViewHolder(
         dataList: List<Photo>
     ) {
 
-        val extension = File(photoModel.path).extension
+        val extension = File(photoModel.path).extension.lowercase()
 
         glide.load(photoModel.path).centerCrop().into(image)
 

@@ -26,6 +26,7 @@ import androidx.viewpager.widget.PagerAdapter
 import com.brandonhxrr.gallery.CustomViewPager
 import com.brandonhxrr.gallery.Photo
 import com.brandonhxrr.gallery.R
+import com.brandonhxrr.gallery.videoExtensions
 import com.bumptech.glide.Glide
 import com.github.chrisbanes.photoview.PhotoView
 import java.io.File
@@ -59,12 +60,10 @@ class ViewPagerAdapter(
         val imageView: PhotoView = itemView.findViewById(R.id.displayImage)
         val playButton: ImageView = itemView.findViewById(R.id.play_button)
 
-        val videoExtensions = arrayOf("mp4", "mkv", "avi", "wmv", "mov")
-
         imageList[position].let {
             val file = File(it.path)
 
-            if(file.extension in videoExtensions){
+            if(file.extension.lowercase() in videoExtensions){
                 playButton.visibility = View.VISIBLE
 
                 playButton.setOnClickListener {
