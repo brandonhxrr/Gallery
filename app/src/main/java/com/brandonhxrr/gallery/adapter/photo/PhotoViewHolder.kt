@@ -64,7 +64,7 @@ class PhotoViewHolder(view: View, val adapter: PhotoAdapter, private val showDel
 
         image.setOnClickListener {
             if(extension in imageExtensions){
-                val limit : Int = if(dataList.size > 2000) 2000 else dataList.size
+                val limit : Int = if(dataList.size > 1000) 1000 else dataList.size
                 val gson = Gson()
                 val data = gson.toJson(dataList.subList(0, limit))
 
