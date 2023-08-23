@@ -36,7 +36,6 @@
     <string name="retry">Reintentar</string>
     <string name="exit">Salir</string>
     <string name="time_format">dd/MM/yyyy HH:mm a</string>
-    <string name="time_format_date">dd \'de\' MMMM \'de\' yyyy</string>
     <string name="details_path">Ruta</string>
     <string name="details_type">Tipo</string>
     <string name="details_size">Tamaño</string>

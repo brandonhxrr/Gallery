@@ -39,7 +39,6 @@
     <string name="retry">Retry</string>
     <string name="exit">Exit</string>
     <string name="time_format">MM/dd/yyyy HH:mm a</string>
-    <string name="time_format_date">MMMM dd\',\' yyyy</string>
     <string name="details_path">Path</string>
     <string name="details_type">Type</string>
     <string name="details_size">Size</string>

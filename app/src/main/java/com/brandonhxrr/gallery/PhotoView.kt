@@ -46,8 +46,8 @@ class PhotoView : AppCompatActivity() {
     private var media: List<Photo>? = null
     private lateinit var viewPager: CustomViewPager
     private lateinit var viewPagerAdapter: ViewPagerAdapter
-    private lateinit var photoDate: TextView
-    private lateinit var photoTime: TextView
+    private lateinit var photoName: TextView
+    private lateinit var photoDatetime: TextView
     private lateinit var container: ConstraintLayout
     private lateinit var toolbar: Toolbar
     private lateinit var btnDelete: ImageButton
@@ -70,8 +70,8 @@ class PhotoView : AppCompatActivity() {
 
         setContentView(R.layout.activity_photo_view)
 
-        photoDate = findViewById(R.id.photo_date)
-        photoTime = findViewById(R.id.photo_time)
+        photoName = findViewById(R.id.photo_name)
+        photoDatetime = findViewById(R.id.photo_datetime)
         container = findViewById(R.id.constraintContainer)
         btnDelete = findViewById(R.id.btn_delete)
         btnShare = findViewById(R.id.btn_share)
@@ -100,9 +100,9 @@ class PhotoView : AppCompatActivity() {
         viewPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener(){
             override fun onPageSelected(pos: Int) {
                 super.onPageSelected(pos)
-                setDateTime()
                 position = pos
                 currentFile = File(media!![position].path)
+                setDateTime()
             }
         })
 
@@ -325,14 +325,14 @@ class PhotoView : AppCompatActivity() {
     private fun setDateTime() {
         val date = Date(currentFile.lastModified())
         val inputFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy", Locale.getDefault())
-        val outputFormatDate = SimpleDateFormat(getString(R.string.time_format_date), Locale.getDefault())
-        val outputFormatTime = SimpleDateFormat("hh:mm a", Locale.getDefault())
+        val outputFormatDate = SimpleDateFormat(getString(R.string.time_format), Locale.getDefault())
 
         val input = inputFormat.format(date)
         val dateParse = inputFormat.parse(input)
 
-        photoDate.text = outputFormatDate.format(dateParse!!)
-        photoTime.text = outputFormatTime.format(dateParse)
+        photoName.text = currentFile.name
+
+        photoDatetime.text = outputFormatDate.format(dateParse!!)
     }
 
     @SuppressLint("InternalInsetResource")

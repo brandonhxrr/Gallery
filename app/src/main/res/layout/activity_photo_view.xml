@@ -43,7 +43,7 @@
                 android:layout_marginBottom="5dp"
                 android:orientation="vertical">
                 <TextView
-                    android:id="@+id/photo_date"
+                    android:id="@+id/photo_name"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="0.7"
@@ -55,7 +55,7 @@
                     android:textColor="@color/md_theme_dark_background"
                     android:textSize="16sp" />
                 <TextView
-                    android:id="@+id/photo_time"
+                    android:id="@+id/photo_datetime"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="0.5"
